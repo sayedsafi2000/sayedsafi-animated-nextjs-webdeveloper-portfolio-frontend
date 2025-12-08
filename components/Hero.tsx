@@ -110,9 +110,9 @@ export default function Hero() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-40 z-[1]" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
           {/* Text Content */}
-          <div className="text-center lg:text-left">
+          <div className="text-center lg:text-left order-last lg:order-first">
             <motion.div
               className="inline-block mb-4"
               initial={{ opacity: 0, y: 20 }}
@@ -304,12 +304,12 @@ export default function Hero() {
 
           {/* Hero Image - Animated */}
           <motion.div
-            className="relative hidden lg:block"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
+            className="relative block order-first lg:order-last"
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
           >
-            <div className="relative w-full max-w-md mx-auto">
+            <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
               {/* Animated Glow Effect */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl"
@@ -327,11 +327,11 @@ export default function Hero() {
               
               {/* Image Container */}
               <motion.div
-                className="relative z-10 rounded-2xl overflow-hidden shadow-2xl"
+                className="relative z-10 rounded-xl md:rounded-2xl overflow-hidden shadow-xl md:shadow-2xl"
                 whileHover={{ scale: 1.05, rotate: 2 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden ">
+                <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden">
                   <motion.div
                     initial={{ scale: 1.1, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -347,21 +347,21 @@ export default function Hero() {
                         objectPosition: 'center center',
                       }}
                       priority
-                      sizes="(max-width: 768px) 100vw, 500px"
+                      sizes="(max-width: 640px) 300px, (max-width: 768px) 400px, 500px"
                     />
                   </motion.div>
                   {/* Subtle Border Glow */}
                   <motion.div
-                    className="absolute inset-0 border-2 border-white/5 dark:border-gray-900/5 rounded-2xl pointer-events-none"
+                    className="absolute inset-0 border-2 border-white/5 dark:border-gray-900/5 rounded-xl md:rounded-2xl pointer-events-none"
                   />
                 </div>
               </motion.div>
 
-              {/* Floating decorative elements */}
+              {/* Floating decorative elements - Hidden on mobile for better performance */}
               {[...Array(3)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-400 rounded-lg opacity-20 blur-xl"
+                  className="absolute w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-br from-blue-400 to-purple-400 rounded-lg opacity-20 blur-xl hidden sm:block"
                   style={{
                     top: `${20 + i * 30}%`,
                     left: i % 2 === 0 ? '-10%' : '110%',
