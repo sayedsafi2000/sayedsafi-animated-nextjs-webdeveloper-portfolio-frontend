@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+
+Sitemap: https://sayedsafi.me/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
