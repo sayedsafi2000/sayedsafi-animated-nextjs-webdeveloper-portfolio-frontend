@@ -53,7 +53,7 @@ export default function Header() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99] }}
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 w-screen max-w-full overflow-x-hidden ${
         isScrolled
           ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl border-b border-gray-200/50 dark:border-gray-800/50'
           : 'bg-transparent'
@@ -76,30 +76,30 @@ export default function Header() {
           }}
         />
       )}
-      <nav className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 max-w-7xl">
-        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
+      <nav className="w-full max-w-full overflow-x-hidden">
+        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20 w-full max-w-full px-2 sm:px-4 md:px-6 lg:px-8">
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex-shrink-0"
+            className="flex-shrink-0 min-w-0 max-w-[calc(100%-100px)] sm:max-w-none"
           >
             <Link
               href="/"
-              className="relative group flex items-center gap-1.5 sm:gap-2"
+              className="relative group flex items-center gap-1 sm:gap-1.5 md:gap-2 min-w-0"
             >
               {/* Logo/Icon */}
               <motion.div
-                className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 flex items-center justify-center shadow-lg flex-shrink-0"
+                className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 flex items-center justify-center shadow-lg flex-shrink-0"
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.6 }}
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400 rounded-lg sm:rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
                 />
-                <span className="text-white text-sm sm:text-lg md:text-xl font-bold relative z-10">SS</span>
+                <span className="text-white text-xs sm:text-lg md:text-xl font-bold relative z-10">SS</span>
                 <motion.div
                   className="absolute inset-0 rounded-lg sm:rounded-xl border-2 border-white/20"
                   animate={{
@@ -115,9 +115,9 @@ export default function Header() {
               </motion.div>
               
               {/* Site Title */}
-              <div className="flex flex-col min-w-0">
+              <div className="flex flex-col min-w-0 overflow-hidden">
                 <motion.span
-                  className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent relative z-10 truncate"
+                  className="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent relative z-10 truncate"
                   animate={{
                     backgroundPosition: ['0%', '100%', '0%'],
                   }}
@@ -215,22 +215,22 @@ export default function Header() {
           </div>
 
           {/* Tablet & Mobile Menu Button */}
-          <div className="lg:hidden flex items-center space-x-2 sm:space-x-3 relative z-10 flex-shrink-0">
+          <div className="lg:hidden flex items-center gap-1 sm:gap-1.5 md:gap-2 relative z-10 flex-shrink-0">
             <motion.button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-800 dark:to-gray-700 text-gray-800 dark:text-gray-200 shadow-md"
+              className="p-1.5 sm:p-2 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-800 dark:to-gray-700 text-gray-800 dark:text-gray-200 shadow-md"
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1, rotate: 180 }}
             >
-              {mounted && theme === 'dark' ? <Sun size={18} className="sm:w-5 sm:h-5" /> : <Moon size={18} className="sm:w-5 sm:h-5" />}
+              {mounted && theme === 'dark' ? <Sun size={14} className="sm:w-4 sm:h-4" /> : <Moon size={14} className="sm:w-4 sm:h-4" />}
             </motion.button>
             <motion.button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 sm:p-2.5 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg"
+              className="p-1.5 sm:p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg"
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.05 }}
             >
-              {isMobileMenuOpen ? <X size={20} className="sm:w-6 sm:h-6" /> : <Menu size={20} className="sm:w-6 sm:h-6" />}
+              {isMobileMenuOpen ? <X size={16} className="sm:w-5 sm:h-5" /> : <Menu size={16} className="sm:w-5 sm:h-5" />}
             </motion.button>
           </div>
         </div>
@@ -245,7 +245,7 @@ export default function Header() {
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 shadow-lg overflow-hidden"
           >
-            <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-1 sm:space-y-2 max-h-[80vh] overflow-y-auto">
+            <div className="w-full px-3 sm:px-4 py-4 sm:py-6 space-y-1 sm:space-y-2 max-h-[80vh] overflow-y-auto">
               {navItems.map((item, index) => (
                 <motion.div
                   key={item.name}
