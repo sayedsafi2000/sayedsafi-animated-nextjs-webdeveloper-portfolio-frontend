@@ -1,63 +1,90 @@
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useParams, notFound } from 'next/navigation'
 import BlogDetail from '@/components/BlogDetail'
-import { blogPosts } from '@/data/blogPosts'
+import { blogAPI } from '@/lib/api'
 
-export async function generateStaticParams() {
-  return blogPosts.map((post) => ({
-    slug: post.slug,
-  }))
+interface BlogPost {
+  _id: string
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  date: string
+  readTime: string
+  category: string
+  image: string
+  link: string
+  tags: string[]
+  published: boolean
+  author?: {
+    name: string
+    bio: string
+    image: string
+  }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = blogPosts.find((p) => p.slug === params.slug)
+export default function BlogPostPage() {
+  const params = useParams()
+  const slug = params.slug as string
+  const [post, setPost] = useState<BlogPost | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
 
-  if (!post) {
-    return {
-      title: 'Blog Post Not Found',
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        setLoading(true)
+        const response = await blogAPI.getBySlug(slug)
+        if (response.data.post && response.data.post.published) {
+          setPost(response.data.post)
+        } else {
+          setError(true)
+        }
+      } catch (error) {
+        console.error('Error fetching blog post:', error)
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
     }
+
+    if (slug) {
+      fetchPost()
+    }
+  }, [slug])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white dark:bg-gray-900 pt-20 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    )
   }
 
-  return {
-    title: `${post.title} | Sayed Safi - Full-Stack Web Developer`,
-    description: post.excerpt,
-    keywords: post.tags.join(', '),
-    authors: [{ name: 'Sayed Safi' }],
-    openGraph: {
-      title: post.title,
-      description: post.excerpt,
-      type: 'article',
-      publishedTime: post.date,
-      authors: ['Sayed Safi'],
-      tags: post.tags,
-      images: [
-        {
-          url: post.image || '/og-image.jpg',
-          width: 1200,
-          height: 630,
-          alt: post.title,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: post.title,
-      description: post.excerpt,
-      images: [post.image || '/og-image.jpg'],
-    },
-    alternates: {
-      canonical: `https://sayedsafi.me/blog/${post.slug}`,
-    },
-  }
-}
-
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((p) => p.slug === params.slug)
-
-  if (!post) {
+  if (error || !post) {
     notFound()
   }
 
-  return <BlogDetail post={post} />
-}
+  // Transform API post to match BlogDetail component interface
+  const blogPost = {
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    content: post.content,
+    date: post.date,
+    readTime: post.readTime,
+    category: post.category,
+    image: post.image,
+    link: post.link,
+    tags: post.tags || [],
+    author: post.author || {
+      name: 'Sayed Safi',
+      bio: 'Full-Stack Web Developer specializing in modern web technologies',
+      image: '/sayed-safi.jpg'
+    }
+  }
 
+  return <BlogDetail post={blogPost} />
+}

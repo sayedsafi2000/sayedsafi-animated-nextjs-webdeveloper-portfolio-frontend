@@ -2,33 +2,82 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef } from 'react'
-import { Code, Globe, Palette } from 'lucide-react'
+import { useRef, useEffect, useState } from 'react'
+import { Code, Globe, Palette, Briefcase, Database, Smartphone, Cloud } from 'lucide-react'
+import { servicesAPI } from '@/lib/api'
 
-const services = [
-  {
-    icon: Code,
-    title: 'MERN Stack',
-    description: 'Full-stack development using MongoDB, Express, React, and Node.js to build scalable and modern web applications.',
-    color: 'from-blue-500 to-cyan-500',
-  },
-  {
-    icon: Globe,
-    title: 'WordPress',
-    description: 'Custom WordPress development, theme customization, and plugin development for dynamic and content-rich websites.',
-    color: 'from-blue-600 to-blue-400',
-  },
-  {
-    icon: Palette,
-    title: 'Graphic Design',
-    description: 'Creative graphic design services including UI/UX design, branding, and visual identity for your digital presence.',
-    color: 'from-purple-500 to-pink-500',
-  },
-]
+interface Service {
+  _id: string
+  title: string
+  description: string
+  icon: string
+  color: string
+  active: boolean
+}
+
+const iconMap: Record<string, any> = {
+  Code: Code,
+  Globe: Globe,
+  Palette: Palette,
+  Database: Database,
+  Mobile: Smartphone,
+  Smartphone: Smartphone,
+  Cloud: Cloud,
+  Briefcase: Briefcase,
+}
 
 export default function Services() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [services, setServices] = useState<Service[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true)
+        // Fetch services - backend sorts by order first, then createdAt
+        // So we fetch more and sort by createdAt on frontend to get truly latest
+        const response = await servicesAPI.getAll({ limit: 20, active: true })
+        let allServices = response.data.services || []
+        
+        // Sort by createdAt (newest first) to get the latest services
+        allServices = allServices.sort((a: any, b: any) => {
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+          return dateB - dateA // Newest first
+        })
+        
+        // Get the latest 6 services
+        const latestServices = allServices.slice(0, 6)
+        
+        setServices(latestServices)
+      } catch (error) {
+        console.error('Error fetching services:', error)
+        setServices([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchServices()
+  }, [])
+
+  if (loading) {
+    return (
+      <section
+        id="services"
+        ref={ref}
+        className="py-20 md:py-32"
+      >
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section
@@ -51,100 +100,51 @@ export default function Services() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {services.map((service, index) => {
-            const Icon = service.icon
-            return (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 50, rotateY: -90, scale: 0.8 }}
-                animate={isInView ? { opacity: 1, y: 0, rotateY: 0, scale: 1 } : {}}
-                transition={{ 
-                  delay: index * 0.15, 
-                  duration: 0.8,
-                  type: 'spring',
-                  stiffness: 100,
-                  damping: 15,
-                }}
-                whileHover={{
-                  y: -15,
-                  rotateY: 8,
-                  rotateX: 5,
-                  scale: 1.05,
-                  z: 50,
-                }}
-                className="group relative bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden perspective-1000"
-              >
+        {services.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600 dark:text-gray-400">No services available at the moment.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service, index) => {
+              const Icon = iconMap[service.icon] || Code
+              return (
                 <motion.div
-                  className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br opacity-10 group-hover:opacity-30 transition-opacity"
-                  animate={{
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 90, 0],
-                  }}
+                  key={service._id}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    delay: index * 0.5,
-                  }}
-                />
-                <motion.div
-                  className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${service.color} mb-6 relative`}
-                  whileHover={{ 
-                    rotate: 360, 
-                    scale: 1.15,
-                    y: -5
-                  }}
-                  animate={{
-                    y: [0, -5, 0],
-                  }}
-                  transition={{ 
+                    delay: index * 0.1,
                     duration: 0.6,
                     type: 'spring',
-                    stiffness: 200,
-                    y: {
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    },
+                    stiffness: 100,
                   }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  whileHover={{ y: -10, scale: 1.02 }}
+                  className="group relative bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden"
                 >
+                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${service.color} opacity-10 group-hover:opacity-20 transition-opacity rounded-bl-full`} />
+                  
                   <motion.div
-                    className="absolute inset-0 bg-white/20 rounded-2xl"
-                    animate={{
-                      scale: [1, 1.3, 1],
-                      opacity: [0.5, 0, 0.5],
-                      rotate: [0, 180, 360],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: 'easeInOut',
-                    }}
-                  />
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"
-                    animate={{
-                      opacity: [0, 1, 0],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                    }}
-                  />
-                  <Icon className="w-8 h-8 text-white relative z-10" />
+                    className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${service.color} mb-6`}
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <Icon className="w-8 h-8 text-white" />
+                  </motion.div>
+
+                  <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+                    {service.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {service.description}
+                  </p>
                 </motion.div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-                  {service.title}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                  {service.description}
-                </p>
-              </motion.div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </div>
     </section>
   )
 }
-

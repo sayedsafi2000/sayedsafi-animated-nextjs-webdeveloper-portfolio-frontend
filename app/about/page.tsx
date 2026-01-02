@@ -9,6 +9,7 @@ import ScrollProgress from '@/components/ScrollProgress'
 import SmoothScroll from '@/components/SmoothScroll'
 import LoadingScreen from '@/components/LoadingScreen'
 import About from '@/components/About'
+import Experience from '@/components/Experience'
 import Footer from '@/components/Footer'
 import FloatingElements from '@/components/FloatingElements'
 
@@ -48,6 +49,7 @@ export default function AboutPage() {
         <FloatingElements />
         <Header />
         <About />
+        <Experience />
         <Footer />
       </motion.main>
     </>

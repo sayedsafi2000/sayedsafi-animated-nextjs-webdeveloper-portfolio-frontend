@@ -8,17 +8,17 @@ import { Briefcase, GraduationCap } from 'lucide-react'
 const experiences = [
   {
     type: 'experience',
-    title: 'Web Developer',
-    company: 'Asad Snapper',
-    period: 'Present',
-    description: 'Currently working on Musafir Store front - an E-commerce Website. Building scalable web applications using modern technologies.',
+    title: 'Full Stack Web Developer',
+    company: 'Webcoronet IT, Sylhet',
+    period: '2024-Present',
+    description: 'Currently working as a Full Stack Web Developer at Webcoronet IT. Building scalable web applications using modern technologies.',
   },
   {
     type: 'experience',
-    title: 'Full Stack Web Developer',
-    company: 'Webcoronet IT, Sylhet',
-    period: '2016-2018',
-    description: 'Developed and maintained web applications using modern technologies. Worked on multiple client projects.',
+    title: 'Wordpress Developer',
+    company: 'GoBangla Solution',
+    period: '2023-Present',
+    description: 'Currently working as a Full Stack Web Developer at GoBangla Solution. Building scalable web applications using modern technologies.',
   },
   {
     type: 'experience',
@@ -41,7 +41,7 @@ const education = [
     type: 'education',
     title: 'Bachelor of Computer Science & Engineering',
     company: 'Metropolitan University, Sylhet',
-    period: '2022-2026',
+    period: '2022-Present',
     description: 'Pursuing degree in Computer Science and Engineering.',
   },
   {

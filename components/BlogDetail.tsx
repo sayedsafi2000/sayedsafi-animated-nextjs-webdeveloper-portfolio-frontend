@@ -4,7 +4,26 @@ import { motion } from 'framer-motion'
 import { Calendar, Clock, ArrowLeft, Share2 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import type { BlogPost } from '@/data/blogPosts'
+import DOMPurify from 'dompurify'
+import { useEffect, useState } from 'react'
+
+interface BlogPost {
+  slug: string
+  title: string
+  excerpt: string
+  content: string
+  date: string
+  readTime: string
+  category: string
+  image?: string
+  link: string
+  tags: string[]
+  author: {
+    name: string
+    bio: string
+    image: string
+  }
+}
 
 interface BlogDetailProps {
   post: BlogPost
@@ -12,6 +31,20 @@ interface BlogDetailProps {
 
 export default function BlogDetail({ post }: BlogDetailProps) {
   const router = useRouter()
+  const [sanitizedContent, setSanitizedContent] = useState('')
+
+  useEffect(() => {
+    if (post.content) {
+      // Sanitize HTML content for safe rendering
+      const clean = DOMPurify.sanitize(post.content, {
+        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote', 'a', 'img', 'code', 'pre', 'span', 'div'],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'style', 'target', 'rel']
+      })
+      setSanitizedContent(clean)
+    } else {
+      setSanitizedContent('')
+    }
+  }, [post.content])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -102,6 +135,26 @@ export default function BlogDetail({ post }: BlogDetailProps) {
       {/* Content */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-4xl mx-auto">
+          {/* Featured Image */}
+          {post.image && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="mb-12 rounded-2xl overflow-hidden"
+            >
+              <img
+                src={post.image}
+                alt={post.title}
+                className="w-full h-auto object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.style.display = 'none'
+                }}
+              />
+            </motion.div>
+          )}
+
           {/* Author Info */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -123,24 +176,26 @@ export default function BlogDetail({ post }: BlogDetailProps) {
           </motion.div>
 
           {/* Tags */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="flex flex-wrap gap-2 mb-12"
-          >
-            {post.tags.map((tag, index) => (
-              <motion.span
-                key={tag}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4 + index * 0.1 }}
-                className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
-              >
-                {tag}
-              </motion.span>
-            ))}
-          </motion.div>
+          {post.tags && post.tags.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex flex-wrap gap-2 mb-12"
+            >
+              {post.tags.map((tag, index) => (
+                <motion.span
+                  key={tag}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
+                  className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
+                >
+                  {tag}
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
 
           {/* Article Content */}
           <motion.div
@@ -159,41 +214,17 @@ export default function BlogDetail({ post }: BlogDetailProps) {
               prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4
               prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4
               prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2
-              prose-hr:border-gray-300 dark:prose-hr:border-gray-700"
+              prose-hr:border-gray-300 dark:prose-hr:border-gray-700
+              prose-img:rounded-lg prose-img:my-8"
           >
-            {post.content.split('\n\n').map((paragraph, pIndex) => {
-              if (!paragraph.trim()) return null
-              
-              // Handle code blocks
-              if (paragraph.includes('```')) {
-                const codeMatch = paragraph.match(/```(\w+)?\n([\s\S]*?)```/)
-                if (codeMatch) {
-                  return (
-                    <pre key={pIndex} className="bg-gray-900 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto my-4">
-                      <code className="text-gray-100 text-sm">{codeMatch[2].trim()}</code>
-                    </pre>
-                  )
-                }
-              }
-              
-              // Handle headings
-              if (paragraph.startsWith('# ')) {
-                return <h1 key={pIndex} className="text-4xl font-bold mt-8 mb-4 text-gray-900 dark:text-white">{paragraph.substring(2)}</h1>
-              }
-              if (paragraph.startsWith('## ')) {
-                return <h2 key={pIndex} className="text-3xl font-bold mt-6 mb-3 text-gray-900 dark:text-white">{paragraph.substring(3)}</h2>
-              }
-              if (paragraph.startsWith('### ')) {
-                return <h3 key={pIndex} className="text-2xl font-bold mt-4 mb-2 text-gray-900 dark:text-white">{paragraph.substring(4)}</h3>
-              }
-              
-              // Handle regular paragraphs with inline formatting
-              const processed = paragraph
-                .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900 dark:text-white">$1</strong>')
-                .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-blue-600 dark:text-blue-400 text-sm">$1</code>')
-              
-              return <p key={pIndex} className="mb-4 text-sm text-gray-700 dark:text-gray-300 leading-relaxed" dangerouslySetInnerHTML={{ __html: processed }} />
-            })}
+            {sanitizedContent ? (
+              <div 
+                className="blog-content"
+                dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+              />
+            ) : (
+              <p className="text-gray-500 dark:text-gray-400 italic">Content is loading...</p>
+            )}
           </motion.div>
 
           {/* Back to Blog */}
@@ -204,7 +235,7 @@ export default function BlogDetail({ post }: BlogDetailProps) {
             className="mt-12 pt-12 border-t border-gray-200 dark:border-gray-800"
           >
             <Link
-              href="/#blog"
+              href="/blog"
               className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
             >
               <ArrowLeft size={20} />
@@ -244,4 +275,3 @@ export default function BlogDetail({ post }: BlogDetailProps) {
     </article>
   )
 }
-
