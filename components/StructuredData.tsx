@@ -7,7 +7,7 @@ export default function StructuredData() {
     name: 'Sayed Safi',
     alternateName: 'Sayed MD Safiuddin Safi',
     url: 'https://sayedsafi.me',
-    image: 'https://sayedsafi.me/og-image.jpg',
+    image: 'https://sayedsafi.me/opengraph-image',
     jobTitle: 'Full-Stack Web Developer',
     worksFor: {
       '@type': 'Organization',

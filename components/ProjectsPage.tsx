@@ -161,7 +161,7 @@ export default function ProjectsPage() {
                         {project.image ? (
                           <Image
                             src={project.image}
-                            alt={project.title}
+                            alt={`${project.title} - ${project.category} project by Sayed Safi, MERN Stack Developer`}
                             fill
                             className="object-cover"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -250,7 +250,7 @@ export default function ProjectsPage() {
                         {project.image ? (
                           <Image
                             src={project.image}
-                            alt={project.title}
+                            alt={`${project.title} - ${project.category} project by Sayed Safi, MERN Stack Developer`}
                             fill
                             className="object-cover"
                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { Github, Linkedin, Facebook, Instagram, Mail, MapPin } from 'lucide-react'
 
 export default function Footer() {
@@ -62,29 +63,34 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4 text-white">Quick Links</h4>
             <ul className="space-y-2">
               <li>
-                <a href="#home" className="hover:text-blue-400 transition-colors">
+                <Link href="/" className="hover:text-blue-400 transition-colors">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#about" className="hover:text-blue-400 transition-colors">
+                <Link href="/about" className="hover:text-blue-400 transition-colors">
                   About
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#projects" className="hover:text-blue-400 transition-colors">
+                <Link href="/projects" className="hover:text-blue-400 transition-colors">
                   Projects
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#blog" className="hover:text-blue-400 transition-colors">
+                <Link href="/blog" className="hover:text-blue-400 transition-colors">
                   Blog
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#contact" className="hover:text-blue-400 transition-colors">
+                <Link href="/services" className="hover:text-blue-400 transition-colors">
+                  Services
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-blue-400 transition-colors">
                   Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>

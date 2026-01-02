@@ -167,7 +167,7 @@ export default function Projects() {
                   {project.image ? (
                     <Image
                       src={project.image}
-                      alt={project.title}
+                      alt={`${project.title} - ${project.category} project by Sayed Safi, Full-Stack Web Developer`}
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, 50vw"

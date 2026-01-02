@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { Calendar, Clock, ArrowLeft, Share2 } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import DOMPurify from 'dompurify'
 import { useEffect, useState } from 'react'
@@ -143,10 +144,14 @@ export default function BlogDetail({ post }: BlogDetailProps) {
               transition={{ delay: 0.3 }}
               className="mb-12 rounded-2xl overflow-hidden"
             >
-              <img
+              <Image
                 src={post.image}
-                alt={post.title}
+                alt={`${post.title} - Blog post by Sayed Safi, Full-Stack Web Developer`}
+                width={1200}
+                height={630}
                 className="w-full h-auto object-cover"
+                priority
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement
                   target.style.display = 'none'

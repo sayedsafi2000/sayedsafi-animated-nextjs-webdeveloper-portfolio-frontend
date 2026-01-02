@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
 import { blogAPI } from '@/lib/api'
 
@@ -125,10 +126,12 @@ export default function Blog() {
                   {/* Image */}
                   <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden">
                     {post.image ? (
-                      <img
+                      <Image
                         src={post.image}
-                        alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        alt={`${post.title} - Web Development Blog by Sayed Safi, MERN Stack Developer`}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
                           target.style.display = 'none'

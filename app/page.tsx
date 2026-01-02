@@ -1,13 +1,14 @@
 'use client'
 
 import { useEffect, useState, lazy, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import StructuredData from '@/components/StructuredData'
 import ScrollProgress from '@/components/ScrollProgress'
 import SmoothScroll from '@/components/SmoothScroll'
 import LoadingScreen from '@/components/LoadingScreen'
+import { Metadata } from 'next'
 
 // Lazy load heavy components
 const About = lazy(() => import('@/components/About'))
@@ -55,6 +56,7 @@ export default function Home() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
         className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-500 relative"
+        role="main"
       >
         <StructuredData />
         <ScrollProgress />
@@ -63,34 +65,74 @@ export default function Home() {
           <FloatingElements />
         </Suspense>
         <Header />
-        <Hero />
-        <Suspense fallback={null}>
-          <About />
-        </Suspense>
-        <Suspense fallback={null}>
-          <Projects />
-        </Suspense>
-        <Suspense fallback={null}>
-          <Blog />
-        </Suspense>
-        <Suspense fallback={null}>
-          <Experience />
-        </Suspense>
-        <Suspense fallback={null}>
-          <Services />
-        </Suspense>
-        <Suspense fallback={null}>
-          <Testimonials />
-        </Suspense>
-        <Suspense fallback={null}>
-          <CallToAction />
-        </Suspense>
-        <Suspense fallback={null}>
-          <Contact />
-        </Suspense>
-        <Suspense fallback={null}>
-          <Footer />
-        </Suspense>
+        
+        {/* Hero Section with H1 */}
+        <section aria-label="Hero introduction">
+          <Hero />
+        </section>
+        
+        {/* About Section */}
+        <section id="about" aria-label="About me">
+          <Suspense fallback={null}>
+            <About />
+          </Suspense>
+        </section>
+        
+        {/* Projects Section */}
+        <section id="projects" aria-label="Project portfolio">
+          <Suspense fallback={null}>
+            <Projects />
+          </Suspense>
+        </section>
+        
+        {/* Blog Section */}
+        <section id="blog" aria-label="Blog articles">
+          <Suspense fallback={null}>
+            <Blog />
+          </Suspense>
+        </section>
+        
+        {/* Experience Section */}
+        <section id="experience" aria-label="Work experience">
+          <Suspense fallback={null}>
+            <Experience />
+          </Suspense>
+        </section>
+        
+        {/* Services Section */}
+        <section id="services" aria-label="Web development services">
+          <Suspense fallback={null}>
+            <Services />
+          </Suspense>
+        </section>
+        
+        {/* Testimonials Section */}
+        <section id="testimonials" aria-label="Client testimonials">
+          <Suspense fallback={null}>
+            <Testimonials />
+          </Suspense>
+        </section>
+        
+        {/* Call to Action Section */}
+        <section aria-label="Call to action">
+          <Suspense fallback={null}>
+            <CallToAction />
+          </Suspense>
+        </section>
+        
+        {/* Contact Section */}
+        <section id="contact" aria-label="Contact information">
+          <Suspense fallback={null}>
+            <Contact />
+          </Suspense>
+        </section>
+        
+        {/* Footer */}
+        <footer>
+          <Suspense fallback={null}>
+            <Footer />
+          </Suspense>
+        </footer>
       </motion.main>
     </>
   )
