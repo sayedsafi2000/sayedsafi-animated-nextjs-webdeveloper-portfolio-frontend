@@ -1,30 +1,40 @@
 import axios from 'axios'
 
 // API URL configuration
-// Production backend URL
-const PRODUCTION_API_URL = 'https://sayedsafi-animated-nextjs-webdevelo-gamma.vercel.app/api'
-const LOCAL_API_URL = 'http://localhost:5000/api'
-
-// Determine API URL
-// Priority: 1. Environment variable, 2. Production URL (default)
+// Only use environment variable - no hardcoded URLs for security
 const getAPIURL = () => {
-  // If environment variable is explicitly set, use it
-  if (process.env.NEXT_PUBLIC_API_URL) {
-    return process.env.NEXT_PUBLIC_API_URL
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL
+  
+  if (!apiUrl) {
+    const errorMsg = 'NEXT_PUBLIC_API_URL environment variable is not set.'
+    
+    if (process.env.NODE_ENV === 'development') {
+      console.error('❌', errorMsg)
+      console.error('💡 For local development, create .env.local file with:')
+      console.error('   NEXT_PUBLIC_API_URL=http://localhost:5000/api')
+      console.error('   OR use your production backend URL')
+      // Return empty string - will cause API calls to fail with clear error
+      return ''
+    }
+    
+    // In production, this is required
+    console.error('❌', errorMsg)
+    console.error('⚠️ Please set NEXT_PUBLIC_API_URL in Vercel environment variables.')
+    return '' // Return empty string to make errors obvious
   }
   
-  // Default to production URL
-  // For local development, create .env.local with NEXT_PUBLIC_API_URL=http://localhost:5000/api
-  return PRODUCTION_API_URL
+  return apiUrl
 }
 
 const API_URL = getAPIURL()
 
-// Log API URL on initialization (helps debug)
+// Log API URL configuration status (without exposing the URL)
 if (typeof window !== 'undefined') {
-  console.log('🔧 API URL Configured:', API_URL)
-  console.log('🔧 Environment Variable:', process.env.NEXT_PUBLIC_API_URL || 'Not set (using production)')
-  console.log('🔧 Current Location:', window.location.hostname)
+  if (API_URL) {
+    console.log('✅ API URL configured from environment variable')
+  } else {
+    console.error('❌ API URL is not configured! Set NEXT_PUBLIC_API_URL environment variable.')
+  }
 }
 
 // Normalize API URL (remove trailing slash if present)
@@ -44,18 +54,16 @@ const api = axios.create({
 // Add request interceptor for debugging
 api.interceptors.request.use(
   (config) => {
-    // Always log in development, and in production if there's an issue
-    const url = (config.baseURL || '') + (config.url || '')
-    console.log('📡 API Request:', url)
-    console.log('📡 Full Config:', {
-      baseURL: config.baseURL,
-      url: config.url,
-      method: config.method
-    })
+    // Only log in development mode for security
+    if (process.env.NODE_ENV === 'development') {
+      const url = (config.baseURL || '') + (config.url || '')
+      console.log('📡 API Request:', url)
+      console.log('📡 Method:', config.method)
+    }
     return config
   },
   (error) => {
-    console.error('❌ Request Error:', error)
+    console.error('❌ Request Error:', error.message)
     return Promise.reject(error)
   }
 )
@@ -127,7 +135,9 @@ export const projectsAPI = {
       if (params?.isCustomCode !== undefined) queryParams.append('isCustomCode', params.isCustomCode.toString())
       
       const response = await api.get(`/projects?${queryParams.toString()}`)
-      console.log('✅ Projects API Response:', response.data)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Projects API Response:', response.data)
+      }
       return response.data
     } catch (error: any) {
       console.error('❌ Projects API Error:', error)
@@ -152,7 +162,9 @@ export const servicesAPI = {
       if (params?.active !== undefined) queryParams.append('active', params.active.toString())
       
       const response = await api.get(`/services?${queryParams.toString()}`)
-      console.log('✅ Services API Response:', response.data)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Services API Response:', response.data)
+      }
       return response.data
     } catch (error: any) {
       console.error('❌ Services API Error:', error)
@@ -171,12 +183,11 @@ export const servicesAPI = {
 export const testAPI = async () => {
   try {
     console.log('🧪 Testing API Connection...')
-    console.log('🧪 API URL:', API_URL)
     const response = await api.get('/health')
-    console.log('✅ API Test Successful:', response.data)
+    console.log('✅ API Test Successful')
     return { success: true, data: response.data }
   } catch (error: any) {
-    console.error('❌ API Test Failed:', error)
+    console.error('❌ API Test Failed:', error.message)
     return { 
       success: false, 
       error: error.message,

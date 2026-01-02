@@ -44,7 +44,7 @@ export default function Projects() {
         // Backend sorts by featured first, then order, then createdAt
         // So we fetch more and sort by createdAt on frontend to get truly latest
         const response = await projectsAPI.getAll({ limit: 20 })
-        let allProjects = response.data.projects || []
+        let allProjects = response?.data?.projects || []
         
         // Sort by createdAt (newest first) to get the latest projects
         // Backend returns projects with timestamps, so createdAt should be available

@@ -39,7 +39,7 @@ export default function Services() {
         // Fetch services - backend sorts by order first, then createdAt
         // So we fetch more and sort by createdAt on frontend to get truly latest
         const response = await servicesAPI.getAll({ limit: 20, active: true })
-        let allServices = response.data.services || []
+        let allServices = response?.data?.services || []
         
         // Sort by createdAt (newest first) to get the latest services
         allServices = allServices.sort((a: any, b: any) => {

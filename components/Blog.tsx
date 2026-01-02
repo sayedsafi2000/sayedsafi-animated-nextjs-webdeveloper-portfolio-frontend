@@ -31,7 +31,7 @@ export default function Blog() {
       try {
         setLoading(true)
         const response = await blogAPI.getAll({ limit: 6, published: true })
-        setBlogPosts(response.data.posts || [])
+        setBlogPosts(response?.data?.posts || [])
       } catch (error) {
         console.error('Error fetching blogs:', error)
         setBlogPosts([])
