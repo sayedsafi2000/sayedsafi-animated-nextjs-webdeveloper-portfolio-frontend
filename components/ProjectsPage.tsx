@@ -168,7 +168,8 @@ export default function ProjectsPage() {
                             unoptimized
                             onError={(e) => {
                               const target = e.target as HTMLImageElement
-                              target.src = '/api/placeholder/600/400'
+                              // Hide image on error instead of using placeholder
+                              target.style.display = 'none'
                             }}
                           />
                         ) : (
@@ -257,7 +258,8 @@ export default function ProjectsPage() {
                             unoptimized
                             onError={(e) => {
                               const target = e.target as HTMLImageElement
-                              target.src = '/api/placeholder/600/400'
+                              // Hide image on error instead of using placeholder
+                              target.style.display = 'none'
                             }}
                           />
                         ) : (

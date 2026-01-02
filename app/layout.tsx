@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Josefin_Sans } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import PageTracker from '@/components/PageTracker'
 
 const josefinSans = Josefin_Sans({ 
   subsets: ['latin'],
@@ -183,9 +184,15 @@ export default function RootLayout({
         
         {/* RSS Feed Link */}
         <link rel="alternate" type="application/rss+xml" title="Sayed Safi Blog RSS Feed" href="https://sayedsafi.me/feed.xml" />
+        
+        {/* Favicon */}
+        <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        <link rel="shortcut icon" href="/logo.png" />
       </head>
       <body className={josefinSans.variable}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <PageTracker />
           {children}
         </ThemeProvider>
       </body>

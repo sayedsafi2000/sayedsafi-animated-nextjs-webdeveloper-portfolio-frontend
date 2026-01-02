@@ -6,6 +6,7 @@ import { Menu, X, Moon, Sun } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 
 const navItems = [
   { name: 'Home', href: '/' },
@@ -92,25 +93,18 @@ export default function Header() {
             >
               {/* Logo/Icon */}
               <motion.div
-                className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 flex items-center justify-center shadow-lg flex-shrink-0"
-                whileHover={{ rotate: 360 }}
-                transition={{ duration: 0.6 }}
+                className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl overflow-hidden shadow-lg flex-shrink-0"
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
               >
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400 rounded-lg sm:rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"
-                />
-                <span className="text-white text-xs sm:text-lg md:text-xl font-bold relative z-10">SS</span>
-                <motion.div
-                  className="absolute inset-0 rounded-lg sm:rounded-xl border-2 border-white/20"
-                  animate={{
-                    scale: [1, 1.1, 1],
-                    opacity: [0.5, 0.8, 0.5],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
+                <Image
+                  src="/logo.png"
+                  alt="Sayed Safi Logo"
+                  width={48}
+                  height={48}
+                  className="w-full h-full object-contain"
+                  priority
                 />
               </motion.div>
               

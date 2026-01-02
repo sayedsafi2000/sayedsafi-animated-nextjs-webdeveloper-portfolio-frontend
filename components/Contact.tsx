@@ -4,23 +4,70 @@ import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef, useState, useCallback } from 'react'
 import { Mail, Send, Github, Linkedin, Facebook, Instagram, MapPin, Phone } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 
 export default function Contact() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const pathname = usePathname()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     message: '',
   })
+  const [loading, setLoading] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
-    // Reset form
+    setLoading(true)
+    setSubmitStatus('idle')
+
+    try {
+      // Use relative URL - Next.js API route will proxy to backend
+      // This keeps the backend URL hidden from the client
+      const apiUrl = '/api/leads/create';
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📧 Submitting lead');
+      }
+      
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          page: 'contact',
+          path: pathname || '/contact'
+        })
+      })
+
+      if (response.ok) {
+        console.log('✅ Lead submitted successfully');
+        setSubmitStatus('success')
     setFormData({ name: '', email: '', message: '' })
-  }, [formData])
+        // Reset status after 3 seconds
+        setTimeout(() => setSubmitStatus('idle'), 3000)
+      } else {
+        console.error('❌ Lead submission failed:', response.status, response.statusText);
+        if (response.status === 404) {
+          console.warn('⚠️ Backend routes not found. Please deploy the new route files to production.');
+        }
+        setSubmitStatus('error')
+        setTimeout(() => setSubmitStatus('idle'), 3000)
+      }
+    } catch (error) {
+      console.error('❌ Error submitting form:', error)
+      setSubmitStatus('error')
+      setTimeout(() => setSubmitStatus('idle'), 3000)
+    } finally {
+      setLoading(false)
+    }
+  }, [formData, pathname])
 
   const socialLinks = [
     { icon: Github, href: 'https://github.com/sayedsafi2000', label: 'GitHub', color: 'hover:text-gray-900 dark:hover:text-white' },
@@ -250,11 +297,22 @@ export default function Contact() {
                 />
               </div>
 
+              {submitStatus === 'success' && (
+                <div className="p-4 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-medium">
+                  Message sent successfully! I'll get back to you soon.
+                </div>
+              )}
+              {submitStatus === 'error' && (
+                <div className="p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm font-medium">
+                  Failed to send message. Please try again.
+                </div>
+              )}
               <motion.button
                 type="submit"
-                className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 relative overflow-hidden group"
-                whileHover={{ scale: 1.03, y: -2 }}
-                whileTap={{ scale: 0.97 }}
+                disabled={loading}
+                className="w-full px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed"
+                whileHover={loading ? {} : { scale: 1.03, y: -2 }}
+                whileTap={loading ? {} : { scale: 0.97 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.6 }}
@@ -275,10 +333,19 @@ export default function Contact() {
                 />
                 <motion.span
                   className="relative z-10 flex items-center gap-2"
-                  whileHover={{ x: 5 }}
+                  whileHover={loading ? {} : { x: 5 }}
                 >
+                  {loading ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    <>
                   <Send size={20} />
                   Send Message
+                    </>
+                  )}
                 </motion.span>
               </motion.button>
             </div>
