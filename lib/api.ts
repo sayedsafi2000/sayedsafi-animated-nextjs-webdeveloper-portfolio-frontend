@@ -1,23 +1,27 @@
 import axios from 'axios'
 
 // API URL configuration
-// Only use environment variable - no hardcoded URLs for security
+// Local development: always use localhost:5000 (ignores env var)
+// Production: use environment variable (required)
 const getAPIURL = () => {
+  // Check if we're in local development FIRST
+  // Check NODE_ENV (works in both SSR and client)
+  const isNodeDevelopment = process.env.NODE_ENV === 'development'
+  
+  // Check window location (only works on client-side)
+  const isClientLocalhost = typeof window !== 'undefined' && 
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  
+  // In local development, ALWAYS use localhost backend (ignore env var)
+  if (isNodeDevelopment || isClientLocalhost) {
+    return 'http://localhost:5000/api'
+  }
+  
+  // In production, use environment variable (required)
   const apiUrl = process.env.NEXT_PUBLIC_API_URL
   
   if (!apiUrl) {
-    const errorMsg = 'NEXT_PUBLIC_API_URL environment variable is not set.'
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.error('❌', errorMsg)
-      console.error('💡 For local development, create .env.local file with:')
-      console.error('   NEXT_PUBLIC_API_URL=http://localhost:5000/api')
-      console.error('   OR use your production backend URL')
-      // Return empty string - will cause API calls to fail with clear error
-      return ''
-    }
-    
-    // In production, this is required
+    const errorMsg = 'NEXT_PUBLIC_API_URL environment variable is not set in production.'
     console.error('❌', errorMsg)
     console.error('⚠️ Please set NEXT_PUBLIC_API_URL in Vercel environment variables.')
     return '' // Return empty string to make errors obvious
@@ -28,10 +32,16 @@ const getAPIURL = () => {
 
 const API_URL = getAPIURL()
 
-// Log API URL configuration status (without exposing the URL)
+// Log API URL configuration status
 if (typeof window !== 'undefined') {
   if (API_URL) {
-    console.log('✅ API URL configured from environment variable')
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    if (isLocal) {
+      console.log('✅ API URL: Using localhost:5000 (local development)')
+      console.log('📡 Backend URL: http://localhost:5000/api')
+    } else {
+      console.log('✅ API URL: Using environment variable (production mode)')
+    }
   } else {
     console.error('❌ API URL is not configured! Set NEXT_PUBLIC_API_URL environment variable.')
   }
