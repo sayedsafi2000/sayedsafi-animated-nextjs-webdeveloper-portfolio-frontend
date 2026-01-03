@@ -75,7 +75,10 @@ export default function Blog() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
+          transition={{ 
+            duration: 0.6,
+            ease: [0.25, 0.46, 0.45, 0.94]
+          }}
           className="text-center mb-16"
         >
           <motion.span
@@ -104,24 +107,25 @@ export default function Blog() {
               {blogPosts.map((post, index) => (
                 <motion.article
                   key={post._id}
-                  initial={{ opacity: 0, y: 100, rotateX: -15, scale: 0.9 }}
-                  whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+                  style={{ willChange: 'transform', transform: 'translate3d(0, 0, 0)' }}
+                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ 
-                    delay: index * 0.15, 
-                    duration: 0.8, 
-                    type: 'spring',
-                    stiffness: 100,
-                    damping: 15
+                    delay: index * 0.1, 
+                    duration: 0.6,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                    type: 'tween'
                   }}
                   viewport={{ once: true, margin: '-50px' }}
                   whileHover={{ 
-                    y: -15, 
-                    rotateY: 8,
-                    rotateX: 5,
+                    y: -8,
                     scale: 1.02,
-                    z: 50
+                    transition: { 
+                      duration: 0.3,
+                      ease: [0.25, 0.46, 0.45, 0.94]
+                    }
                   }}
-                  className="group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all perspective-1000"
+                  className="group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all"
                 >
                   {/* Image */}
                   <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden">
@@ -132,6 +136,7 @@ export default function Blog() {
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        quality={90}
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
                           target.style.display = 'none'

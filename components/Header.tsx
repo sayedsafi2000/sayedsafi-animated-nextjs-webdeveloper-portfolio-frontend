@@ -93,8 +93,8 @@ export default function Header() {
             >
               {/* Logo/Icon */}
               <motion.div
-                className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-lg sm:rounded-xl overflow-hidden shadow-lg flex-shrink-0"
-                whileHover={{ scale: 1.05, rotate: 5 }}
+                className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 flex-shrink-0"
+                whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >

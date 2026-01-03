@@ -319,11 +319,27 @@ html {
 a, button {
   transition-property: color, background-color, opacity;
   transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* GPU acceleration - use sparingly */
 .motion-safe\:will-change-transform {
   will-change: transform;
+}
+
+/* Hardware acceleration for smooth animations */
+.project-card,
+[class*="motion"] {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Smooth image transitions */
+img {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: optimizeQuality;
 }
 
 /* Enhanced hover effects */

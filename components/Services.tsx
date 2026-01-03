@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef, useEffect, useState } from 'react'
-import { Code, Globe, Palette, Briefcase, Database, Smartphone, Cloud } from 'lucide-react'
+import { Code, Globe, Palette, Briefcase, Database, Smartphone, Cloud, TrendingUp, PenTool, FileText, Megaphone } from 'lucide-react'
 import { servicesAPI } from '@/lib/api'
 
 interface Service {
@@ -13,6 +13,7 @@ interface Service {
   icon: string
   color: string
   active: boolean
+  image?: string
 }
 
 const iconMap: Record<string, any> = {
@@ -24,6 +25,15 @@ const iconMap: Record<string, any> = {
   Smartphone: Smartphone,
   Cloud: Cloud,
   Briefcase: Briefcase,
+  'Digital Marketing': Megaphone,
+  'Content Writing': PenTool,
+  Marketing: Megaphone,
+  Writing: PenTool,
+  Content: FileText,
+  Megaphone: Megaphone,
+  PenTool: PenTool,
+  FileText: FileText,
+  TrendingUp: TrendingUp,
 }
 
 export default function Services() {
@@ -89,7 +99,10 @@ export default function Services() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
+          transition={{ 
+            duration: 0.6,
+            ease: [0.25, 0.46, 0.45, 0.94]
+          }}
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
@@ -107,20 +120,31 @@ export default function Services() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => {
-              const Icon = iconMap[service.icon] || Code
+              // Try to find icon by service title first, then by icon name
+              const Icon = iconMap[service.title] || iconMap[service.icon] || Code
+              const hasImage = service.image && service.image.trim() !== ''
+              
               return (
                 <motion.div
                   key={service._id}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  style={{ willChange: 'transform', transform: 'translate3d(0, 0, 0)' }}
+                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{
                     delay: index * 0.1,
                     duration: 0.6,
-                    type: 'spring',
-                    stiffness: 100,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                    type: 'tween'
                   }}
                   viewport={{ once: true, margin: '-50px' }}
-                  whileHover={{ y: -10, scale: 1.02 }}
+                  whileHover={{ 
+                    y: -8, 
+                    scale: 1.02,
+                    transition: { 
+                      duration: 0.3,
+                      ease: [0.25, 0.46, 0.45, 0.94]
+                    }
+                  }}
                   className="group relative bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all overflow-hidden"
                 >
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${service.color} opacity-10 group-hover:opacity-20 transition-opacity rounded-bl-full`} />
@@ -130,7 +154,25 @@ export default function Services() {
                     whileHover={{ rotate: 360, scale: 1.1 }}
                     transition={{ duration: 0.6 }}
                   >
-                    <Icon className="w-8 h-8 text-white" />
+                    {hasImage ? (
+                      <img 
+                        src={service.image} 
+                        alt={service.title}
+                        className="w-8 h-8 object-contain"
+                        style={{ filter: 'brightness(0) invert(1)' }}
+                        onError={(e) => {
+                          // Fallback to icon if image fails
+                          const target = e.target as HTMLImageElement
+                          target.style.display = 'none'
+                          const iconElement = target.nextElementSibling as HTMLElement
+                          if (iconElement) iconElement.style.display = 'block'
+                        }}
+                      />
+                    ) : null}
+                    <Icon 
+                      className={`w-8 h-8 text-white ${hasImage ? 'hidden' : ''}`}
+                      style={{ display: hasImage ? 'none' : 'block' }}
+                    />
                   </motion.div>
 
                   <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">

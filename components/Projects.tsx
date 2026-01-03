@@ -113,7 +113,10 @@ export default function Projects() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
+          transition={{ 
+            duration: 0.6,
+            ease: [0.25, 0.46, 0.45, 0.94]
+          }}
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
@@ -144,22 +147,22 @@ export default function Projects() {
             <motion.div
                 key={project._id}
               className="project-card group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg"
-              initial={{ opacity: 0, y: 100, rotateX: -15, scale: 0.9 }}
-              whileInView={{ opacity: 1, y: 0, rotateX: 0, scale: 1 }}
+              style={{ willChange: 'transform', transform: 'translate3d(0, 0, 0)' }}
+              initial={{ opacity: 0, y: 50, scale: 0.95 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
               transition={{
-                delay: index * 0.2,
-                duration: 0.8,
-                type: 'spring',
-                stiffness: 100,
-                damping: 15,
+                delay: index * 0.1,
+                duration: 0.6,
+                ease: [0.25, 0.46, 0.45, 0.94], // Custom cubic-bezier for smoothness
+                type: 'tween',
               }}
               whileHover={{
-                y: -15,
-                rotateY: 8,
-                rotateX: 5,
+                y: -8,
                 scale: 1.02,
-                z: 50,
-                transition: { duration: 0.3 },
+                transition: { 
+                  duration: 0.3,
+                  ease: [0.25, 0.46, 0.45, 0.94]
+                },
               }}
               viewport={{ once: true, margin: '-100px' }}
             >
@@ -169,9 +172,9 @@ export default function Projects() {
                   src={project.image}
                       alt={`${project.title} - ${project.category} project by Sayed Safi, Full-Stack Web Developer`}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  unoptimized
+                  quality={90}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
                         // Hide image on error instead of using placeholder

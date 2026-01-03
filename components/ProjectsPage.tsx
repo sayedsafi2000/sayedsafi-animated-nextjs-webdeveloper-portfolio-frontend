@@ -78,22 +78,26 @@ export default function ProjectsPage() {
       }
     )
 
-    // Project cards animation
+    // Project cards animation - optimized for smoothness
     const cards = containerRef.current.querySelectorAll('.project-card')
+    cards.forEach((card) => {
+      (card as HTMLElement).style.willChange = 'transform, opacity'
+      ;(card as HTMLElement).style.transform = 'translate3d(0, 0, 0)'
+    })
     gsap.fromTo(
       cards,
       {
         opacity: 0,
-        y: 100,
-        scale: 0.9,
+        y: 50,
+        scale: 0.95,
       },
       {
         opacity: 1,
         y: 0,
         scale: 1,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: 'back.out(1.7)',
+        duration: 0.6,
+        stagger: 0.1,
+        ease: 'power2.out', // Smoother easing
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top 80%',

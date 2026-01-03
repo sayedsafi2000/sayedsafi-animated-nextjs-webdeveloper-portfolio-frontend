@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { Code, Globe, Palette, ArrowLeft, Check, Briefcase, Database, Smartphone, Cloud } from 'lucide-react'
+import { Code, Globe, Palette, ArrowLeft, Check, Briefcase, Database, Smartphone, Cloud, TrendingUp, PenTool, FileText, Megaphone } from 'lucide-react'
 import Link from 'next/link'
 import { servicesAPI } from '@/lib/api'
 
@@ -20,6 +20,7 @@ interface Service {
   features: string[]
   price: string
   active: boolean
+  image?: string
 }
 
 const iconMap: Record<string, any> = {
@@ -31,6 +32,15 @@ const iconMap: Record<string, any> = {
   Smartphone: Smartphone,
   Cloud: Cloud,
   Briefcase: Briefcase,
+  'Digital Marketing': Megaphone,
+  'Content Writing': PenTool,
+  Marketing: Megaphone,
+  Writing: PenTool,
+  Content: FileText,
+  Megaphone: Megaphone,
+  PenTool: PenTool,
+  FileText: FileText,
+  TrendingUp: TrendingUp,
 }
 
 export default function ServicesPage() {
@@ -134,7 +144,10 @@ export default function ServicesPage() {
         ) : (
           <div ref={containerRef} className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {services.map((service) => {
-              const Icon = iconMap[service.icon] || Code
+              // Try to find icon by service title first, then by icon name
+              const Icon = iconMap[service.title] || iconMap[service.icon] || Code
+              const hasImage = service.image && service.image.trim() !== ''
+              
               return (
                 <div
                   key={service._id}
@@ -143,7 +156,25 @@ export default function ServicesPage() {
                   <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${service.color} opacity-10 group-hover:opacity-20 transition-opacity rounded-bl-full`} />
                   
                   <div className={`inline-flex p-4 rounded-2xl bg-gradient-to-r ${service.color} mb-6`}>
-                    <Icon className="w-8 h-8 text-white" />
+                    {hasImage ? (
+                      <img 
+                        src={service.image} 
+                        alt={service.title}
+                        className="w-8 h-8 object-contain"
+                        style={{ filter: 'brightness(0) invert(1)' }}
+                        onError={(e) => {
+                          // Fallback to icon if image fails
+                          const target = e.target as HTMLImageElement
+                          target.style.display = 'none'
+                          const iconElement = target.nextElementSibling as HTMLElement
+                          if (iconElement) iconElement.style.display = 'block'
+                        }}
+                      />
+                    ) : null}
+                    <Icon 
+                      className={`w-8 h-8 text-white ${hasImage ? 'hidden' : ''}`}
+                      style={{ display: hasImage ? 'none' : 'block' }}
+                    />
                   </div>
 
                   <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">

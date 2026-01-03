@@ -54,7 +54,11 @@ export default function Home() {
       <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
+        transition={{ 
+          duration: 0.5,
+          ease: [0.25, 0.46, 0.45, 0.94] // Smooth easing
+        }}
+        style={{ willChange: 'opacity' }}
         className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-500 relative"
         role="main"
       >

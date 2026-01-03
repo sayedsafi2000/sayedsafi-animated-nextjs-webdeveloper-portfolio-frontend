@@ -8,13 +8,30 @@ import type { Container, Engine } from '@tsparticles/engine'
 
 export default function ParticlesBackground() {
   const [init, setInit] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    initParticlesEngine(async (engine: Engine) => {
-      await loadSlim(engine)
-    }).then(() => {
-      setInit(true)
-    })
+    // Detect mobile devices
+    const checkMobile = () => {
+      const isMobileDevice = window.innerWidth < 768 || 
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+      setIsMobile(isMobileDevice)
+      
+      // Disable particles on mobile for better performance
+      if (isMobileDevice) {
+        return
+      }
+
+      initParticlesEngine(async (engine: Engine) => {
+        await loadSlim(engine)
+      }).then(() => {
+        setInit(true)
+      })
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile, { passive: true })
+    return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
   const particlesLoaded = useCallback(async (container: Container | undefined) => {
@@ -28,11 +45,11 @@ export default function ParticlesBackground() {
           value: 'transparent',
         },
       },
-      fpsLimit: 60,
+      fpsLimit: 30, // Reduced from 60 for better performance
       interactivity: {
         events: {
           onClick: {
-            enable: true,
+            enable: false, // Disabled for performance
             mode: 'push' as const,
           },
           onHover: {
@@ -45,16 +62,16 @@ export default function ParticlesBackground() {
         },
         modes: {
           push: {
-            quantity: 4,
+            quantity: 2, // Reduced from 4
           },
           grab: {
-            distance: 200,
+            distance: 150, // Reduced from 200
             links: {
-              opacity: 0.5,
+              opacity: 0.3, // Reduced from 0.5
             },
           },
           repulse: {
-            distance: 150,
+            distance: 100, // Reduced from 150
             duration: 0.4,
           },
         },
@@ -65,9 +82,9 @@ export default function ParticlesBackground() {
         },
         links: {
           color: '#3b82f6',
-          distance: 150,
+          distance: 120, // Reduced from 150
           enable: true,
-          opacity: 0.4,
+          opacity: 0.3, // Reduced from 0.4
           width: 1,
         },
         move: {
@@ -77,21 +94,21 @@ export default function ParticlesBackground() {
             default: 'bounce' as const,
           },
           random: true,
-          speed: 1,
+          speed: 0.8, // Reduced from 1
           straight: false,
         },
         number: {
           density: {
             enable: true,
-            area: 800,
+            area: 1000, // Increased area to reduce density
           },
-          value: 80,
+          value: 40, // Reduced from 80 for better performance
         },
         opacity: {
-          value: { min: 0.3, max: 0.8 },
+          value: { min: 0.2, max: 0.6 }, // Reduced opacity range
           animation: {
             enable: true,
-            speed: 1,
+            speed: 0.5, // Reduced from 1
             sync: false,
           },
         },
@@ -99,20 +116,21 @@ export default function ParticlesBackground() {
           type: 'circle' as const,
         },
         size: {
-          value: { min: 1, max: 4 },
+          value: { min: 1, max: 3 }, // Reduced max size from 4
           animation: {
             enable: true,
-            speed: 2,
+            speed: 1, // Reduced from 2
             sync: false,
           },
         },
       },
-      detectRetina: true,
+      detectRetina: false, // Disabled for better performance
     }),
     []
   )
 
-  if (!init) return null
+  // Don't render particles on mobile
+  if (isMobile || !init) return null
 
   return (
     <Particles
@@ -120,6 +138,7 @@ export default function ParticlesBackground() {
       particlesLoaded={particlesLoaded}
       options={options}
       className="absolute inset-0 z-0"
+      style={{ willChange: 'transform' }}
     />
   )
 }
