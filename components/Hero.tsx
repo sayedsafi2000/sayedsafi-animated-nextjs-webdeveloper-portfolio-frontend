@@ -339,7 +339,7 @@ export default function Hero() {
                     className="w-full h-full relative"
                   >
                     <Image
-                      src="/sayed-safi.jpg"
+                      src="/sayed_safi2.jpg"
                       alt="Sayed Safi - Full-Stack Web Developer"
                       fill
                       className="object-cover"

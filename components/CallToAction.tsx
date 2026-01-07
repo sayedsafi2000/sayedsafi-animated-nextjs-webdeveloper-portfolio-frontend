@@ -84,7 +84,7 @@ export default function CallToAction() {
                 transition={{ type: 'spring', stiffness: 300 }}
               >
                 <Image
-                  src="/sayed-safi2.jpg"
+                  src="/sayed_safi2.jpg"
                   alt="Sayed Safi - Full-Stack Developer"
                   width={600}
                   height={600}
