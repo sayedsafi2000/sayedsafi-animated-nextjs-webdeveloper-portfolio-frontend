@@ -1,4 +1,6 @@
 # Multi-stage build for Next.js Frontend
+# This Dockerfile works when frontend/ is deployed as a standalone repository
+# If using monorepo with docker-compose, ensure context is set to frontend/ directory
 FROM node:20-alpine AS base
 
 # Install dependencies only when needed
@@ -6,15 +8,15 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy package files
-COPY frontend/package.json frontend/package-lock.json* ./
+# Copy package files (from current directory, not subdirectory)
+COPY package.json package-lock.json* ./
 RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY frontend/ .
+COPY . .
 
 # Set environment variables for build (you can add build-time env vars here if needed)
 ENV NEXT_TELEMETRY_DISABLED=1
