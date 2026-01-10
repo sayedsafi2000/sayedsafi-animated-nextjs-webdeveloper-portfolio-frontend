@@ -5,6 +5,7 @@ const nextConfig = {
   compress: true,
   poweredByHeader: false,
   swcMinify: true,
+  output: 'standalone', // Enable standalone output for Docker
   
   // SEO & Performance
   productionBrowserSourceMaps: false,
