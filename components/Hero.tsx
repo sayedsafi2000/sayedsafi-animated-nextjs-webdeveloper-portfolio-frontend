@@ -125,9 +125,9 @@ export default function Hero() {
           <div className="text-center lg:text-left order-last lg:order-first">
             <motion.div
               className="inline-block mb-4"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 1, y: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.2 }}
             >
               <motion.span
                 className="text-sm md:text-base font-semibold text-blue-400 dark:text-blue-300 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20"
