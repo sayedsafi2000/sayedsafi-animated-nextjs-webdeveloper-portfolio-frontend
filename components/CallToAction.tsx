@@ -2,13 +2,24 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { ArrowRight, Sparkles } from 'lucide-react'
 import Image from 'next/image'
 
 export default function CallToAction() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isMobile, setIsMobile] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const isMobileDevice = window.innerWidth < 768
+      setPrefersReducedMotion(reducedMotion)
+      setIsMobile(isMobileDevice)
+    }
+  }, [])
 
   const slogans = [
     'Transforming Ideas into Digital Reality',
@@ -23,36 +34,38 @@ export default function CallToAction() {
       ref={ref}
       className="py-20 md:py-32 relative overflow-hidden"
     >
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, -50, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 1,
-          }}
-        />
-      </div>
+      {/* Animated Background - Disabled on mobile/reduced motion for performance */}
+      {!isMobile && !prefersReducedMotion && (
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, 50, 0],
+              y: [0, 30, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, -50, 0],
+              y: [0, -30, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: 1,
+            }}
+          />
+        </div>
+      )}
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -64,23 +77,25 @@ export default function CallToAction() {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-              {/* Glow Effect */}
-              <motion.div
-                className="absolute -inset-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-2xl opacity-30"
-                animate={{
-                  scale: [1, 1.1, 1],
-                  rotate: [0, 180, 360],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
+              {/* Glow Effect - Disabled on mobile/reduced motion for performance */}
+              {!isMobile && !prefersReducedMotion && (
+                <motion.div
+                  className="absolute -inset-4 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-3xl blur-2xl opacity-30"
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    rotate: [0, 180, 360],
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                />
+              )}
               
               <motion.div
                 className="relative z-10 rounded-3xl overflow-hidden"
-                whileHover={{ scale: 1.02 }}
+                whileHover={!isMobile ? { scale: 1.02 } : {}}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
                 <Image
@@ -92,39 +107,43 @@ export default function CallToAction() {
                   loading="lazy"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                 />
-                {/* Gradient Overlay */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20"
-                  animate={{
-                    opacity: [0.3, 0.5, 0.3],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                />
-                {/* Border Glow */}
-                <motion.div
-                  className="absolute inset-0 border-4 border-white/30 dark:border-gray-900/30 rounded-3xl"
-                  animate={{
-                    boxShadow: [
-                      '0 0 30px rgba(59, 130, 246, 0.4)',
-                      '0 0 60px rgba(139, 92, 246, 0.6)',
-                      '0 0 30px rgba(59, 130, 246, 0.4)',
-                    ],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                />
+                {/* Gradient Overlay - Disabled on mobile/reduced motion */}
+                {!isMobile && !prefersReducedMotion && (
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-purple-500/20 to-pink-500/20"
+                    animate={{
+                      opacity: [0.3, 0.5, 0.3],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }}
+                  />
+                )}
+                {/* Border Glow - Disabled on mobile/reduced motion */}
+                {!isMobile && !prefersReducedMotion && (
+                  <motion.div
+                    className="absolute inset-0 border-4 border-white/30 dark:border-gray-900/30 rounded-3xl"
+                    animate={{
+                      boxShadow: [
+                        '0 0 30px rgba(59, 130, 246, 0.4)',
+                        '0 0 60px rgba(139, 92, 246, 0.6)',
+                        '0 0 30px rgba(59, 130, 246, 0.4)',
+                      ],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }}
+                  />
+                )}
               </motion.div>
             </div>
 
-            {/* Floating Elements */}
-            {[...Array(4)].map((_, i) => (
+            {/* Floating Elements - Disabled on mobile/reduced motion for performance */}
+            {!isMobile && !prefersReducedMotion && [...Array(4)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute w-16 h-16 bg-gradient-to-br from-blue-400/30 to-purple-400/30 rounded-full blur-xl"

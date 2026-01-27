@@ -21,15 +21,22 @@ export default function Hero() {
   const textRef = useRef<HTMLParagraphElement>(null)
   const buttonsRef = useRef<HTMLDivElement>(null)
   const [showParticles, setShowParticles] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
 
   // Removed mouse tracking for better performance
 
   useEffect(() => {
     // Enable particles only on larger screens and when user doesn't prefer reduced motion
     if (typeof window !== 'undefined') {
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       const isDesktop = window.innerWidth >= 1024
-      if (!prefersReducedMotion && isDesktop) {
+      const isMobileDevice = window.innerWidth < 768
+      
+      setPrefersReducedMotion(reducedMotion)
+      setIsMobile(isMobileDevice)
+      
+      if (!reducedMotion && isDesktop) {
         setShowParticles(true)
       }
     }
@@ -72,49 +79,51 @@ export default function Hero() {
       {/* Particles Background */}
       {showParticles && <ParticlesBackground />}
 
-      {/* Animated Gradient Background */}
-      <div className="absolute inset-0 overflow-hidden z-0">
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/30 rounded-full blur-[100px] z-0"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/30 rounded-full blur-[100px] z-0"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, -50, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 1,
-          }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-pink-500/20 rounded-full blur-[100px] z-0"
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, 180, 360],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 0.5,
-          }}
-        />
-      </div>
+      {/* Animated Gradient Background - Disabled on mobile/reduced motion for performance */}
+      {!isMobile && !prefersReducedMotion && (
+        <div className="absolute inset-0 overflow-hidden z-0">
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/30 rounded-full blur-[100px] z-0"
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, 50, 0],
+              y: [0, 30, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/30 rounded-full blur-[100px] z-0"
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, -50, 0],
+              y: [0, -30, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: 1,
+            }}
+          />
+          <motion.div
+            className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-pink-500/20 rounded-full blur-[100px] z-0"
+            animate={{
+              scale: [1, 1.3, 1],
+              rotate: [0, 180, 360],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: 0.5,
+            }}
+          />
+        </div>
+      )}
 
       {/* Grid Pattern Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] opacity-40 z-[1]" />
@@ -152,14 +161,22 @@ export default function Hero() {
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
                 }}
-                animate={{
-                  backgroundPosition: ['0%', '100%', '0%'],
-                }}
-                transition={{
-                  duration: 5,
-                  repeat: Infinity,
-                  ease: 'linear',
-                }}
+                animate={
+                  !isMobile && !prefersReducedMotion
+                    ? {
+                        backgroundPosition: ['0%', '100%', '0%'],
+                      }
+                    : {}
+                }
+                transition={
+                  !isMobile && !prefersReducedMotion
+                    ? {
+                        duration: 5,
+                        repeat: Infinity,
+                        ease: 'linear',
+                      }
+                    : {}
+                }
               >
                 Sayed Safi
               </motion.span>
@@ -318,20 +335,22 @@ export default function Hero() {
             transition={{ duration: 0.2 }}
           >
             <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
-              {/* Animated Glow Effect */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.2, 0.4, 0.2],
-                  rotate: [0, 180, 360],
-                }}
-                transition={{
-                  duration: 8,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
+              {/* Animated Glow Effect - Disabled on mobile for performance */}
+              {!isMobile && !prefersReducedMotion && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl"
+                  animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.2, 0.4, 0.2],
+                    rotate: [0, 180, 360],
+                  }}
+                  transition={{
+                    duration: 8,
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                  }}
+                />
+              )}
               
               {/* Image Container */}
               <motion.div
@@ -365,8 +384,8 @@ export default function Hero() {
                 </div>
               </motion.div>
 
-              {/* Floating decorative elements - Hidden on mobile for better performance */}
-              {[...Array(3)].map((_, i) => (
+              {/* Floating decorative elements - Hidden on mobile/reduced motion for better performance */}
+              {!isMobile && !prefersReducedMotion && [...Array(3)].map((_, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 bg-gradient-to-br from-blue-400 to-purple-400 rounded-lg opacity-20 blur-xl hidden sm:block"

@@ -30,15 +30,22 @@ export default function Header() {
     setMounted(true)
     let rafId: number
     let lastTime = 0
-    const throttleDelay = 16 // ~60fps
+    const throttleDelay = 100 // Increased throttle for better performance
 
     const handleScroll = () => {
       const now = Date.now()
       if (now - lastTime < throttleDelay) return
       lastTime = now
 
+      // Use requestAnimationFrame to batch DOM reads/writes and reduce forced reflows
       rafId = requestAnimationFrame(() => {
-        setIsScrolled(window.scrollY > 20)
+        // Batch read: get scroll position
+        const scrollY = window.scrollY
+        // Batch write: update state only if changed
+        setIsScrolled(prev => {
+          const newValue = scrollY > 20
+          return prev !== newValue ? newValue : prev
+        })
       })
     }
     
