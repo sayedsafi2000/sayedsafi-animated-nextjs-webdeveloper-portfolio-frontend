@@ -23,8 +23,7 @@ const nextConfig = {
     unoptimized: false,
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-    // Default quality for better performance (reduces image sizes)
-    quality: 75,
+    // Note: quality is set per Image component (default is 75 in Next.js)
     remotePatterns: [
       {
         protocol: 'https',
