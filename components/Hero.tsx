@@ -357,7 +357,7 @@ export default function Hero() {
                         objectPosition: 'center center',
                       }}
                       priority
-                      sizes="(max-width: 640px) 300px, (max-width: 768px) 400px, 500px"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
                     />
                   </motion.div>
                   {/* Subtle Border Glow */}

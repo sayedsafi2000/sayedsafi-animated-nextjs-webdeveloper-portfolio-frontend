@@ -1,11 +1,10 @@
 'use client'
 
-import { useEffect, useState, lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import StructuredData from '@/components/StructuredData'
-import LoadingScreen from '@/components/LoadingScreen'
 import { Metadata } from 'next'
 
 // Lazy load heavy components
@@ -22,35 +21,9 @@ const FloatingElements = lazy(() => import('@/components/FloatingElements'))
 const ScrollProgress = lazy(() => import('@/components/ScrollProgress'))
 const SmoothScroll = lazy(() => import('@/components/SmoothScroll'))
 
-// Loading fallback
-const SectionLoader = () => (
-  <div className="min-h-[400px] flex items-center justify-center">
-    <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-  </div>
-)
-
 export default function Home() {
-  const [isInitialLoad, setIsInitialLoad] = useState(true)
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const hasVisited = sessionStorage.getItem('hasVisited')
-      if (hasVisited) {
-        setIsInitialLoad(false)
-        return
-      }
-      sessionStorage.setItem('hasVisited', 'true')
-      
-      const timer = setTimeout(() => {
-        setIsInitialLoad(false)
-      }, 800)
-      return () => clearTimeout(timer)
-    }
-  }, [])
-
   return (
     <>
-      {isInitialLoad && <LoadingScreen />}
       <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

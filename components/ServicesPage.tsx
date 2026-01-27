@@ -160,8 +160,11 @@ export default function ServicesPage() {
                       <img 
                         src={service.image} 
                         alt={service.title}
+                        width={32}
+                        height={32}
                         className="w-8 h-8 object-contain"
                         style={{ filter: 'brightness(0) invert(1)' }}
+                        loading="lazy"
                         onError={(e) => {
                           // Fallback to icon if image fails
                           const target = e.target as HTMLImageElement
