@@ -34,30 +34,30 @@ export default function Hero() {
       }
     }
 
-    // Enhanced animations for hero content
+    // Enhanced animations for hero content - reduced delays for better LCP
     if (typeof window !== 'undefined') {
-      const timer = setTimeout(() => {
+      // Use requestAnimationFrame for immediate render, then animate
+      requestAnimationFrame(() => {
         if (titleRef.current) {
           titleRef.current.style.opacity = '1'
           titleRef.current.style.visibility = 'visible'
-          // Add animation class
-          titleRef.current.style.animation = 'fadeInUp 0.8s ease-out'
+          // Reduced animation duration for faster LCP
+          titleRef.current.style.animation = 'fadeInUp 0.4s ease-out'
         }
         if (subtitleRef.current) {
           subtitleRef.current.style.opacity = '1'
-          subtitleRef.current.style.animation = 'fadeInUp 0.8s ease-out 0.2s both'
+          subtitleRef.current.style.animation = 'fadeInUp 0.4s ease-out 0.1s both'
         }
         if (textRef.current) {
           textRef.current.style.opacity = '1'
-          textRef.current.style.animation = 'fadeInUp 0.8s ease-out 0.4s both'
+          textRef.current.style.animation = 'fadeInUp 0.4s ease-out 0.2s both'
         }
         if (buttonsRef.current) {
           Array.from(buttonsRef.current.children).forEach((child, index) => {
-            (child as HTMLElement).style.animation = `fadeInUp 0.6s ease-out ${0.6 + index * 0.1}s both`
+            (child as HTMLElement).style.animation = `fadeInUp 0.3s ease-out ${0.3 + index * 0.05}s both`
           })
         }
-      }, 100)
-      return () => clearTimeout(timer)
+      })
     }
   }, [])
 
@@ -140,9 +140,9 @@ export default function Hero() {
             <motion.h1
               ref={titleRef}
               className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-tight relative z-20"
-              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              initial={{ opacity: 1, y: 0, scale: 1 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.8, ease: [0.6, -0.05, 0.01, 0.99] }}
+              transition={{ duration: 0.3, ease: [0.6, -0.05, 0.01, 0.99] }}
             >
               <motion.span
                 className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent inline-block relative z-20"
@@ -168,21 +168,21 @@ export default function Hero() {
             <motion.h2
               ref={subtitleRef}
               className="text-2xl md:text-4xl lg:text-5xl font-semibold text-gray-800 dark:text-gray-200 mb-4"
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 1, y: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
+              transition={{ duration: 0.3 }}
             >
               <motion.span
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 1, x: 0 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
+                transition={{ duration: 0.2 }}
               >
                 Full-Stack
               </motion.span>{' '}
               <motion.span
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 1, x: 0 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
+                transition={{ duration: 0.2 }}
               >
                 Web Developer
               </motion.span>
@@ -191,9 +191,9 @@ export default function Hero() {
             <motion.p
               ref={textRef}
               className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-2"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 1, y: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
+              transition={{ duration: 0.2 }}
             >
               MERN Stack Expert · Based in Sylhet, Bangladesh
             </motion.p>
@@ -207,16 +207,16 @@ export default function Hero() {
             <motion.div
               ref={buttonsRef}
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 1, y: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
+              transition={{ duration: 0.2 }}
             >
               <motion.a
                 href="#projects"
                 className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold shadow-lg overflow-hidden"
-                initial={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 1, scale: 1 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
+                transition={{ duration: 0.2 }}
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -240,9 +240,9 @@ export default function Hero() {
               <motion.a
                 href="#contact"
                 className="px-8 py-4 border-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 rounded-full font-semibold hover:bg-gray-100 dark:hover:bg-gray-800 backdrop-blur-sm"
-                initial={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 1, scale: 1 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.9 }}
+                transition={{ duration: 0.2 }}
                 whileHover={{ scale: 1.05, y: -2, borderColor: 'rgb(59, 130, 246)' }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -253,9 +253,9 @@ export default function Hero() {
             {/* Social Stats - Animated */}
             <motion.div
               className="mt-12 flex flex-wrap gap-6 justify-center lg:justify-start"
-              initial={{ opacity: 0 }}
+              initial={{ opacity: 1 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 1 }}
+              transition={{ duration: 0.2 }}
             >
               {[
                 { label: 'Projects', value: '50+', icon: '💼' },
@@ -266,13 +266,11 @@ export default function Hero() {
                 <motion.div
                   key={stat.label}
                   className="text-center p-4 bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm rounded-xl border border-white/20"
-                  initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                  initial={{ opacity: 1, scale: 1, rotate: 0 }}
                   animate={{ opacity: 1, scale: 1, rotate: 0 }}
                   transition={{
-                    delay: 1.2 + index * 0.15,
-                    duration: 0.6,
-                    type: 'spring',
-                    stiffness: 200,
+                    duration: 0.2,
+                    type: 'tween',
                   }}
                   whileHover={{
                     scale: 1.1,
@@ -298,9 +296,9 @@ export default function Hero() {
                   </motion.div>
                   <motion.div
                     className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 1, y: 0 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 1.3 + index * 0.15 }}
+                    transition={{ duration: 0.2 }}
                   >
                     {stat.value}
                   </motion.div>
@@ -315,9 +313,9 @@ export default function Hero() {
           {/* Hero Image - Animated */}
           <motion.div
             className="relative block order-first lg:order-last"
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            initial={{ opacity: 1, y: 0, scale: 1 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            transition={{ duration: 0.2 }}
           >
             <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto">
               {/* Animated Glow Effect */}
@@ -343,9 +341,9 @@ export default function Hero() {
               >
                 <div className="relative aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden">
                   <motion.div
-                    initial={{ scale: 1.1, opacity: 0 }}
+                    initial={{ scale: 1, opacity: 1 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 1, delay: 0.7 }}
+                    transition={{ duration: 0.2 }}
                     className="w-full h-full relative"
                   >
                     <Image
@@ -397,9 +395,9 @@ export default function Hero() {
         {/* Scroll Indicator - Animated */}
         <motion.div
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-10"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1.5 }}
+          transition={{ duration: 0.2 }}
         >
           <motion.a
             href="#about"

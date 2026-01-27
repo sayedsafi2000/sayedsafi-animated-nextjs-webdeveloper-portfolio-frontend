@@ -168,7 +168,7 @@ export default function Projects() {
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-110"
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  quality={90}
+                  quality={75}
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
                         // Hide image on error instead of using placeholder

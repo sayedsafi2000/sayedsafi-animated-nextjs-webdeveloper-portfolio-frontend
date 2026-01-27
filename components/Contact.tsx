@@ -212,6 +212,7 @@ export default function Contact() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`p-4 bg-white dark:bg-gray-900 rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-3 group ${social.color}`}
+                      aria-label={`Visit ${social.label} profile`}
                       whileHover={{ scale: 1.05, y: -5, rotate: 5 }}
                       whileTap={{ scale: 0.95 }}
                       initial={{ opacity: 0, y: 20, rotateX: -90 }}
@@ -221,6 +222,7 @@ export default function Contact() {
                       <motion.div
                         whileHover={{ rotate: 360 }}
                         transition={{ duration: 0.5 }}
+                        aria-hidden="true"
                       >
                         <Icon className="w-6 h-6 text-gray-700 dark:text-gray-300 group-hover:scale-110 transition-transform" />
                       </motion.div>

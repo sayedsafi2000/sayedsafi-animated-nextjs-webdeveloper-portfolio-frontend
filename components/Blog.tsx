@@ -136,7 +136,7 @@ export default function Blog() {
                         fill
                         className="object-cover group-hover:scale-110 transition-transform duration-500"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        quality={90}
+                        quality={75}
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
                           target.style.display = 'none'
@@ -233,6 +233,7 @@ export default function Blog() {
                     <Link
                       href={`/blog/${post.slug}`}
                       className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors group/link"
+                      aria-label={`Read more about ${post.title}`}
                     >
                       <motion.span
                         initial={{ opacity: 0, y: 20 }}
@@ -240,11 +241,12 @@ export default function Blog() {
                         whileHover={{ x: 5 }}
                         transition={{ delay: index * 0.15 + 0.8 }}
                       >
-                        Read More
+                        Read more about {post.title}
                       </motion.span>
                       <motion.div
                         whileHover={{ x: 5 }}
                         transition={{ type: 'spring', stiffness: 400 }}
+                        aria-hidden="true"
                       >
                         <ArrowRight size={18} />
                       </motion.div>

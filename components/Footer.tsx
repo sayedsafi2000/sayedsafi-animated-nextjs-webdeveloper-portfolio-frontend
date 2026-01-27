@@ -133,13 +133,15 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+                    aria-label={`Visit ${social.label} profile`}
                     whileHover={{ scale: 1.1, y: -3, rotate: 360 }}
                     whileTap={{ scale: 0.9 }}
                     initial={{ opacity: 0, scale: 0 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.1, type: 'spring' }}
                   >
-                    <Icon className="w-5 h-5 text-gray-300" />
+                    <Icon className="w-5 h-5 text-gray-300" aria-hidden="true" />
+                    <span className="sr-only">{social.label}</span>
                   </motion.a>
                 )
               })}

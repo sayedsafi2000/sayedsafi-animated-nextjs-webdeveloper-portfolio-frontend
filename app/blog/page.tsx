@@ -255,6 +255,7 @@ export default function BlogPage() {
                       <Link
                         href={`/blog/${post.slug}`}
                         className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors group/link"
+                        aria-label={`Read more about ${post.title}`}
                       >
                         <motion.span
                           initial={{ opacity: 0, y: 20 }}
@@ -262,11 +263,12 @@ export default function BlogPage() {
                           whileHover={{ x: 5 }}
                           transition={{ delay: index * 0.1 + 0.8 }}
                         >
-                          Read More
+                          Read more about {post.title}
                         </motion.span>
                         <motion.div
                           whileHover={{ x: 5 }}
                           transition={{ type: 'spring', stiffness: 400 }}
+                          aria-hidden="true"
                         >
                           <ArrowRight size={18} />
                         </motion.div>

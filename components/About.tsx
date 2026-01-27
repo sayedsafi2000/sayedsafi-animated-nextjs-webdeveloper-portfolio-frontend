@@ -145,14 +145,14 @@ export default function About() {
 
         {/* Skills */}
         <div>
-          <motion.h3 
+          <motion.h2 
             className="text-3xl font-bold mb-12 text-center text-gray-900 dark:text-white"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
             My Tech Stack
-          </motion.h3>
+          </motion.h2>
           <div ref={skillsRef} className="flex flex-wrap justify-center gap-4 md:gap-6">
             {skills.map((skill, index) => (
               <motion.div
