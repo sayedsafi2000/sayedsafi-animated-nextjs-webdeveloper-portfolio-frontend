@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Quote, Star } from 'lucide-react'
 
 const testimonials = [
@@ -32,6 +32,17 @@ const testimonials = [
 export default function Testimonials() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isMobile, setIsMobile] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const isMobileDevice = window.innerWidth < 768
+      setPrefersReducedMotion(reducedMotion)
+      setIsMobile(isMobileDevice)
+    }
+  }, [])
 
   return (
         <section
@@ -39,36 +50,38 @@ export default function Testimonials() {
           ref={ref}
           className="py-20 md:py-32 pt-24 md:pt-28 relative overflow-hidden"
         >
-      {/* Background Effects */}
-      <div className="absolute inset-0">
-        <motion.div
-          className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, 50, 0],
-            y: [0, 30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            x: [0, -50, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 1,
-          }}
-        />
-      </div>
+      {/* Background Effects - Disabled on mobile/reduced motion for performance */}
+      {!isMobile && !prefersReducedMotion && (
+        <div className="absolute inset-0">
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, 50, 0],
+              y: [0, 30, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, -50, 0],
+              y: [0, -30, 0],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: 1,
+            }}
+          />
+        </div>
+      )}
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
@@ -97,41 +110,41 @@ export default function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 100, rotateY: -90, scale: 0.8 }}
+              initial={isMobile || prefersReducedMotion ? { opacity: 1, y: 0, rotateY: 0, scale: 1 } : { opacity: 0, y: 100, rotateY: -90, scale: 0.8 }}
               animate={isInView ? { opacity: 1, y: 0, rotateY: 0, scale: 1 } : {}}
-              transition={{ 
+              transition={isMobile || prefersReducedMotion ? { duration: 0.2 } : { 
                 delay: index * 0.2, 
                 duration: 0.8,
                 type: 'spring',
                 stiffness: 100,
                 damping: 15,
               }}
-              whileHover={{
+              whileHover={!isMobile ? {
                 y: -15,
                 rotateY: 8,
                 rotateX: 5,
                 scale: 1.03,
                 z: 50,
-              }}
+              } : {}}
               className="relative bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all perspective-1000 group"
             >
               {/* Quote Icon */}
               <motion.div
                 className="absolute top-4 right-4 text-blue-500/20 group-hover:text-blue-500/40 transition-colors"
-                animate={{ 
+                animate={!isMobile && !prefersReducedMotion ? { 
                   rotate: [0, 10, -10, 0],
                   scale: [1, 1.1, 1]
-                }}
-                transition={{ 
+                } : {}}
+                transition={!isMobile && !prefersReducedMotion ? { 
                   duration: 4, 
                   repeat: Infinity, 
                   delay: index * 0.5,
                   ease: 'easeInOut'
-                }}
-                whileHover={{ 
+                } : {}}
+                whileHover={!isMobile ? { 
                   rotate: 360,
                   scale: 1.2
-                }}
+                } : {}}
               >
                 <Quote size={60} />
               </motion.div>
@@ -164,7 +177,7 @@ export default function Testimonials() {
               <div className="flex items-center gap-4">
                 <motion.div
                   className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold"
-                  whileHover={{ scale: 1.1, rotate: 360 }}
+                  whileHover={!isMobile ? { scale: 1.1, rotate: 360 } : {}}
                   transition={{ duration: 0.5 }}
                 >
                   {testimonial.name.charAt(0)}

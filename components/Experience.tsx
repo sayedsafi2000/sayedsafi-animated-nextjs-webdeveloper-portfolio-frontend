@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Briefcase, GraduationCap } from 'lucide-react'
 
 const experiences = [
@@ -63,6 +63,17 @@ const education = [
 export default function Experience() {
   const ref = useRef<HTMLElement>(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const [isMobile, setIsMobile] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const isMobileDevice = window.innerWidth < 768
+      setPrefersReducedMotion(reducedMotion)
+      setIsMobile(isMobileDevice)
+    }
+  }, [])
 
   return (
         <section
@@ -99,36 +110,36 @@ export default function Experience() {
               {experiences.map((exp, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: -50, scale: 0.9 }}
+                  initial={isMobile || prefersReducedMotion ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: -50, scale: 0.9 }}
                   animate={isInView ? { opacity: 1, x: 0, scale: 1 } : {}}
-                  transition={{ 
+                  transition={isMobile || prefersReducedMotion ? { duration: 0.2 } : { 
                     delay: index * 0.15, 
                     duration: 0.6,
                     type: 'spring',
                     stiffness: 100,
                   }}
-                  whileHover={{ x: 10, scale: 1.02 }}
+                  whileHover={!isMobile ? { x: 10, scale: 1.02 } : {}}
                   className="relative pl-16 pb-8"
                 >
                   <motion.div
                     className="absolute left-6 top-2 w-4 h-4 bg-blue-600 rounded-full border-4 border-white dark:border-gray-800 z-10"
-                    animate={{
+                    animate={!isMobile && !prefersReducedMotion ? {
                       scale: [1, 1.3, 1],
                       boxShadow: [
                         '0 0 0 0 rgba(59, 130, 246, 0.4)',
                         '0 0 0 10px rgba(59, 130, 246, 0)',
                         '0 0 0 0 rgba(59, 130, 246, 0)',
                       ],
-                    }}
-                    transition={{
+                    } : {}}
+                    transition={!isMobile && !prefersReducedMotion ? {
                       duration: 2,
                       repeat: Infinity,
                       delay: index * 0.3,
-                    }}
+                    } : {}}
                   />
                   <motion.div
                     className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all relative overflow-hidden group"
-                    whileHover={{ y: -5, rotateX: 2 }}
+                    whileHover={!isMobile ? { y: -5, rotateX: 2 } : {}}
                   >
                     <div className="text-sm text-blue-600 dark:text-blue-400 font-semibold mb-1">
                       {exp.period}
