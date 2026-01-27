@@ -104,7 +104,6 @@ export default function Header() {
                   width={48}
                   height={48}
                   className="w-full h-full object-contain"
-                  priority
                 />
               </motion.div>
               
