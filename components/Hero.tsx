@@ -20,10 +20,20 @@ export default function Hero() {
   const subtitleRef = useRef<HTMLHeadingElement>(null)
   const textRef = useRef<HTMLParagraphElement>(null)
   const buttonsRef = useRef<HTMLDivElement>(null)
+  const [showParticles, setShowParticles] = useState(false)
 
   // Removed mouse tracking for better performance
 
   useEffect(() => {
+    // Enable particles only on larger screens and when user doesn't prefer reduced motion
+    if (typeof window !== 'undefined') {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      const isDesktop = window.innerWidth >= 1024
+      if (!prefersReducedMotion && isDesktop) {
+        setShowParticles(true)
+      }
+    }
+
     // Enhanced animations for hero content
     if (typeof window !== 'undefined') {
       const timer = setTimeout(() => {
@@ -60,7 +70,7 @@ export default function Hero() {
       className="min-h-screen flex items-center justify-center relative overflow-hidden pt-20 md:pt-24"
     >
       {/* Particles Background */}
-      <ParticlesBackground />
+      {showParticles && <ParticlesBackground />}
 
       {/* Animated Gradient Background */}
       <div className="absolute inset-0 overflow-hidden z-0">

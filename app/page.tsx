@@ -5,8 +5,6 @@ import { motion } from 'framer-motion'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import StructuredData from '@/components/StructuredData'
-import ScrollProgress from '@/components/ScrollProgress'
-import SmoothScroll from '@/components/SmoothScroll'
 import LoadingScreen from '@/components/LoadingScreen'
 import { Metadata } from 'next'
 
@@ -21,6 +19,8 @@ const CallToAction = lazy(() => import('@/components/CallToAction'))
 const Contact = lazy(() => import('@/components/Contact'))
 const Footer = lazy(() => import('@/components/Footer'))
 const FloatingElements = lazy(() => import('@/components/FloatingElements'))
+const ScrollProgress = lazy(() => import('@/components/ScrollProgress'))
+const SmoothScroll = lazy(() => import('@/components/SmoothScroll'))
 
 // Loading fallback
 const SectionLoader = () => (
@@ -63,8 +63,12 @@ export default function Home() {
         role="main"
       >
         <StructuredData />
-        <ScrollProgress />
-        <SmoothScroll />
+        <Suspense fallback={null}>
+          <ScrollProgress />
+        </Suspense>
+        <Suspense fallback={null}>
+          <SmoothScroll />
+        </Suspense>
         <Suspense fallback={null}>
           <FloatingElements />
         </Suspense>

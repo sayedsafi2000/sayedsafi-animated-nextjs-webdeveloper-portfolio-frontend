@@ -77,7 +77,7 @@ export default function Header() {
           }}
         />
       )}
-      <nav className="w-full max-w-full overflow-x-hidden">
+      <nav className="w-full max-w-full overflow-x-hidden" aria-label="Main navigation">
         <div className="flex items-center justify-between h-14 sm:h-16 md:h-20 w-full max-w-full px-2 sm:px-4 md:px-6 lg:px-8">
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -192,6 +192,7 @@ export default function Header() {
               <motion.button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                 className="relative p-2 xl:p-2.5 rounded-lg xl:rounded-xl bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-800 dark:to-gray-700 text-gray-800 dark:text-gray-200 shadow-md hover:shadow-lg transition-all group"
+                aria-label={mounted && theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
                 whileHover={{ scale: 1.1, rotate: 180 }}
                 whileTap={{ scale: 0.9 }}
               >
@@ -212,6 +213,7 @@ export default function Header() {
             <motion.button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className="p-1.5 sm:p-2 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-800 dark:to-gray-700 text-gray-800 dark:text-gray-200 shadow-md"
+              aria-label={mounted && theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.1, rotate: 180 }}
             >
@@ -220,6 +222,9 @@ export default function Header() {
             <motion.button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-1.5 sm:p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg"
+              aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
               whileTap={{ scale: 0.9 }}
               whileHover={{ scale: 1.05 }}
             >
@@ -237,6 +242,7 @@ export default function Header() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800 shadow-lg overflow-hidden"
+            id="mobile-menu"
           >
             <div className="w-full px-3 sm:px-4 py-4 sm:py-6 space-y-1 sm:space-y-2 max-h-[80vh] overflow-y-auto">
               {navItems.map((item, index) => (

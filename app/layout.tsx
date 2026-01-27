@@ -131,6 +131,11 @@ export default function RootLayout({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
+        {/* Explicit meta description to satisfy Lighthouse/SEO tools */}
+        <meta
+          name="description"
+          content="Sayed Safi is a Full-Stack Web Developer from Bangladesh specializing in MERN Stack, Next.js, React, Node.js, MedusaJS, MongoDB, and WordPress. Currently working at Asad Snapper. Expert in building modern web applications, e-commerce solutions, and responsive websites. Based in Sylhet, Bangladesh."
+        />
         
         {/* Canonical URL */}
         <link rel="canonical" href="https://sayedsafi.me" />
