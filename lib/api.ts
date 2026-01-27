@@ -85,6 +85,26 @@ export const blogAPI = {
       throw error
     }
   },
+  getComments: async (slug: string, params?: { limit?: number; page?: number }) => {
+    try {
+      const queryParams = new URLSearchParams()
+      if (params?.limit) queryParams.append('limit', params.limit.toString())
+      if (params?.page) queryParams.append('page', params.page.toString())
+      const qs = queryParams.toString()
+      const response = await api.get(`/blog/${slug}/comments${qs ? `?${qs}` : ''}`)
+      return response.data
+    } catch (error: any) {
+      throw error
+    }
+  },
+  createComment: async (slug: string, data: { name: string; message: string; rating?: number; email?: string; website?: string }) => {
+    try {
+      const response = await api.post(`/blog/${slug}/comments`, data)
+      return response.data
+    } catch (error: any) {
+      throw error
+    }
+  },
 }
 
 // Projects API

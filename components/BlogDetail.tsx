@@ -1,12 +1,18 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Calendar, Clock, ArrowLeft, Share2 } from 'lucide-react'
+import { Calendar, Clock, ArrowLeft, Share2, Star, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import DOMPurify from 'dompurify'
 import { useEffect, useState } from 'react'
+
+const BlogComments = dynamic(() => import('@/components/BlogComments'), {
+  ssr: false,
+  loading: () => null,
+})
 
 interface BlogPost {
   slug: string
@@ -19,6 +25,10 @@ interface BlogPost {
   image?: string
   link: string
   tags: string[]
+  commentsCount?: number
+  ratingsCount?: number
+  ratingsTotal?: number
+  ratingsAverage?: number
   author: {
     name: string
     bio: string
@@ -33,6 +43,17 @@ interface BlogDetailProps {
 export default function BlogDetail({ post }: BlogDetailProps) {
   const router = useRouter()
   const [sanitizedContent, setSanitizedContent] = useState('')
+  const [stats, setStats] = useState(() => ({
+    commentsCount: post.commentsCount || 0,
+    ratingsCount: post.ratingsCount || 0,
+    ratingsTotal: post.ratingsTotal || 0,
+    ratingsAverage:
+      typeof post.ratingsAverage === 'number'
+        ? post.ratingsAverage
+        : (post.ratingsCount || 0) > 0
+          ? Math.round(((post.ratingsTotal || 0) / (post.ratingsCount || 0)) * 10) / 10
+          : 0,
+  }))
 
   useEffect(() => {
     if (post.content) {
@@ -46,6 +67,20 @@ export default function BlogDetail({ post }: BlogDetailProps) {
       setSanitizedContent('')
     }
   }, [post.content])
+
+  useEffect(() => {
+    setStats({
+      commentsCount: post.commentsCount || 0,
+      ratingsCount: post.ratingsCount || 0,
+      ratingsTotal: post.ratingsTotal || 0,
+      ratingsAverage:
+        typeof post.ratingsAverage === 'number'
+          ? post.ratingsAverage
+          : (post.ratingsCount || 0) > 0
+            ? Math.round(((post.ratingsTotal || 0) / (post.ratingsCount || 0)) * 10) / 10
+            : 0,
+    })
+  }, [post.slug])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -119,6 +154,33 @@ export default function BlogDetail({ post }: BlogDetailProps) {
                 <Clock size={18} />
                 <span>{post.readTime}</span>
               </div>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center">
+                  {Array.from({ length: 5 }, (_, i) => {
+                    const value = i + 1
+                    const filled = value <= Math.round(stats.ratingsAverage || 0)
+                    return (
+                      <Star
+                        key={value}
+                        size={16}
+                        className={filled ? 'text-yellow-300 fill-yellow-300' : 'text-white/40'}
+                        aria-hidden="true"
+                      />
+                    )
+                  })}
+                </div>
+                <span className="text-sm">
+                  {stats.ratingsAverage ? stats.ratingsAverage.toFixed(1) : '0.0'} ({stats.ratingsCount || 0})
+                </span>
+              </div>
+              <a
+                href="#comments"
+                className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+                aria-label="Jump to comments section"
+              >
+                <MessageCircle size={18} />
+                <span className="text-sm">{stats.commentsCount || 0} Comments</span>
+              </a>
               <motion.button
                 onClick={handleShare}
                 className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
@@ -231,6 +293,18 @@ export default function BlogDetail({ post }: BlogDetailProps) {
               <p className="text-gray-500 dark:text-gray-400 italic">Content is loading...</p>
             )}
           </motion.div>
+
+          {/* Comments (lazy-load + fetch on scroll into view) */}
+          <BlogComments
+            slug={post.slug}
+            initialStats={{
+              commentsCount: stats.commentsCount,
+              ratingsCount: stats.ratingsCount,
+              ratingsTotal: stats.ratingsTotal,
+              ratingsAverage: stats.ratingsAverage,
+            }}
+            onStatsChange={(next) => setStats(next)}
+          />
 
           {/* Back to Blog */}
           <motion.div

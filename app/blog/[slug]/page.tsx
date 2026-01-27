@@ -18,6 +18,10 @@ interface BlogPost {
   link: string
   tags: string[]
   published: boolean
+  commentsCount?: number
+  ratingsCount?: number
+  ratingsTotal?: number
+  ratingsAverage?: number
   author?: {
     name: string
     bio: string
@@ -79,6 +83,10 @@ export default function BlogPostPage() {
     image: post.image,
     link: post.link,
     tags: post.tags || [],
+    commentsCount: post.commentsCount || 0,
+    ratingsCount: post.ratingsCount || 0,
+    ratingsTotal: post.ratingsTotal || 0,
+    ratingsAverage: typeof post.ratingsAverage === 'number' ? post.ratingsAverage : undefined,
     author: post.author || {
       name: 'Sayed Safi',
       bio: 'Full-Stack Web Developer specializing in modern web technologies',
