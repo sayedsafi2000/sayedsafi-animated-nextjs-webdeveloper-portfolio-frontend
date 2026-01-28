@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Header from '@/components/Header'
 
 type Props = {
   params: { slug: string }
@@ -132,9 +133,12 @@ export default function BlogPostLayout({
   children: React.ReactNode
 }) {
   return (
-    <article itemScope itemType="https://schema.org/BlogPosting">
-      {children}
-    </article>
+    <>
+      <Header forceSolid />
+      <article itemScope itemType="https://schema.org/BlogPosting">
+        {children}
+      </article>
+    </>
   )
 }
 

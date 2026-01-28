@@ -19,7 +19,12 @@ const navItems = [
   { name: 'Contact', href: '/contact' },
 ]
 
-export default function Header() {
+type HeaderProps = {
+  /** Force solid header background (useful on hero/gradient pages) */
+  forceSolid?: boolean
+}
+
+export default function Header({ forceSolid = false }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { theme, setTheme } = useTheme()
@@ -28,6 +33,7 @@ export default function Header() {
 
   useEffect(() => {
     setMounted(true)
+    if (forceSolid) return
     let rafId: number
     let lastTime = 0
     const throttleDelay = 100 // Increased throttle for better performance
@@ -56,19 +62,25 @@ export default function Header() {
     }
   }, [])
 
+  const isSolid = forceSolid || isScrolled
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/'
+    return pathname === href || pathname.startsWith(`${href}/`)
+  }
+
   return (
     <motion.header
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.6, -0.05, 0.01, 0.99] }}
       className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 w-screen max-w-full overflow-x-hidden ${
-        isScrolled
+        isSolid
           ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl border-b border-gray-200/50 dark:border-gray-800/50'
           : 'bg-transparent'
       }`}
     >
       {/* Animated background gradient when scrolled */}
-      {isScrolled && (
+      {isSolid && (
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-pink-500/5"
           animate={{
@@ -166,7 +178,7 @@ export default function Header() {
                 <Link
                   href={item.href}
                   className={`relative text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all font-medium group px-2 xl:px-3 py-2 rounded-lg xl:rounded-xl block text-sm xl:text-base ${
-                    pathname === item.href ? 'text-blue-600 dark:text-blue-400 font-semibold' : ''
+                    isActive(item.href) ? 'text-blue-600 dark:text-blue-400 font-semibold' : ''
                   }`}
                 >
                   <motion.span
@@ -178,7 +190,7 @@ export default function Header() {
                   {/* Animated underline */}
                   <motion.div
                     className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-full"
-                    initial={{ scaleX: pathname === item.href ? 1 : 0 }}
+                    initial={{ scaleX: isActive(item.href) ? 1 : 0 }}
                     whileHover={{ scaleX: 1 }}
                     transition={{ duration: 0.3 }}
                     style={{ originX: 0 }}
