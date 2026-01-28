@@ -15,9 +15,11 @@ interface BlogPost {
   readTime: string
   category: string
   image: string
+  imageAlt?: string
   link: string
   tags: string[]
   published: boolean
+  status?: 'draft' | 'published' | 'scheduled'
   commentsCount?: number
   ratingsCount?: number
   ratingsTotal?: number
@@ -81,6 +83,7 @@ export default function BlogPostPage() {
     readTime: post.readTime,
     category: post.category,
     image: post.image,
+    imageAlt: post.imageAlt,
     link: post.link,
     tags: post.tags || [],
     commentsCount: post.commentsCount || 0,

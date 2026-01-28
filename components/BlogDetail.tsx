@@ -5,9 +5,9 @@ import { Calendar, Clock, ArrowLeft, Share2, Star, MessageCircle } from 'lucide-
 import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/navigation'
 import DOMPurify from 'dompurify'
 import { useEffect, useState } from 'react'
+import { blogAPI } from '@/lib/api'
 
 const BlogComments = dynamic(() => import('@/components/BlogComments'), {
   ssr: false,
@@ -23,6 +23,7 @@ interface BlogPost {
   readTime: string
   category: string
   image?: string
+  imageAlt?: string
   link: string
   tags: string[]
   commentsCount?: number
@@ -40,9 +41,17 @@ interface BlogDetailProps {
   post: BlogPost
 }
 
+interface RecentPost {
+  _id: string
+  slug: string
+  title: string
+  image?: string
+  date: string
+}
+
 export default function BlogDetail({ post }: BlogDetailProps) {
-  const router = useRouter()
   const [sanitizedContent, setSanitizedContent] = useState('')
+  const [recentPosts, setRecentPosts] = useState<RecentPost[]>([])
   const [stats, setStats] = useState(() => ({
     commentsCount: post.commentsCount || 0,
     ratingsCount: post.ratingsCount || 0,
@@ -82,6 +91,29 @@ export default function BlogDetail({ post }: BlogDetailProps) {
     })
   }, [post.slug])
 
+  // Fetch recent posts (excluding current post)
+  useEffect(() => {
+    const fetchRecentPosts = async () => {
+      try {
+        const response = await blogAPI.getAll({
+          limit: 7,
+          page: 1,
+          published: true
+        })
+        const allPosts = response.data.posts || []
+        // Filter out current post and take up to 6-7 posts
+        const filtered = allPosts
+          .filter((p: any) => p.slug !== post.slug)
+          .slice(0, 7)
+        setRecentPosts(filtered)
+      } catch (error) {
+        console.error('Error fetching recent posts:', error)
+        setRecentPosts([])
+      }
+    }
+    fetchRecentPosts()
+  }, [post.slug])
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('en-US', { 
@@ -110,50 +142,55 @@ export default function BlogDetail({ post }: BlogDetailProps) {
   }
 
   return (
-    <article className="min-h-screen bg-white dark:bg-gray-900 pt-20">
-      {/* Header */}
-      <motion.header
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16"
-      >
+    <article className="min-h-screen bg-white dark:bg-gray-900 pt-14 md:pt-16">
+      {/* Article Header (NYTimes-inspired, matched to site colors) */}
+      <header className="border-b border-gray-200 dark:border-gray-800">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-white/80 hover:text-white mb-8 transition-colors"
-            whileHover={{ x: -5 }}
-          >
-            <ArrowLeft size={20} />
-            <span>Back to Blog</span>
-          </motion.button>
+          <div className="max-w-5xl mx-auto py-6 md:py-8">
+            <div className="flex items-center justify-between gap-4">
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                <ArrowLeft size={18} />
+                <span>Back to Blog</span>
+              </Link>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="max-w-4xl"
-          >
-            <motion.span
-              className="inline-block px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold mb-4"
-            >
+              <button
+                onClick={handleShare}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                aria-label="Share this article"
+              >
+                <Share2 size={16} />
+                <span className="hidden sm:inline">Share</span>
+              </button>
+            </div>
+
+            <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-blue-600 dark:text-blue-400">
               {post.category}
-            </motion.span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            </p>
+            <h1 className="mt-3 text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
               {post.title}
             </h1>
-            <p className="text-sm md:text-base text-white/90 mb-8 leading-relaxed">
+            <p className="mt-4 text-base md:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
               {post.excerpt}
             </p>
-            <div className="flex flex-wrap items-center gap-6 text-white/80">
+
+            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-gray-600 dark:text-gray-400">
               <div className="flex items-center gap-2">
-                <Calendar size={18} />
-                <span>{formatDate(post.date)}</span>
+                <span className="font-semibold text-gray-900 dark:text-white">{post.author.name}</span>
+                <span className="text-gray-300 dark:text-gray-700">•</span>
+                <div className="flex items-center gap-2">
+                  <Calendar size={16} />
+                  <span>{formatDate(post.date)}</span>
+                </div>
               </div>
+
               <div className="flex items-center gap-2">
-                <Clock size={18} />
+                <Clock size={16} />
                 <span>{post.readTime}</span>
               </div>
+
               <div className="flex items-center gap-2">
                 <div className="flex items-center">
                   {Array.from({ length: 5 }, (_, i) => {
@@ -163,7 +200,7 @@ export default function BlogDetail({ post }: BlogDetailProps) {
                       <Star
                         key={value}
                         size={16}
-                        className={filled ? 'text-yellow-300 fill-yellow-300' : 'text-white/40'}
+                        className={filled ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300 dark:text-gray-600'}
                         aria-hidden="true"
                       />
                     )
@@ -173,42 +210,54 @@ export default function BlogDetail({ post }: BlogDetailProps) {
                   {stats.ratingsAverage ? stats.ratingsAverage.toFixed(1) : '0.0'} ({stats.ratingsCount || 0})
                 </span>
               </div>
+
               <a
                 href="#comments"
-                className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
+                className="inline-flex items-center gap-2 font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                 aria-label="Jump to comments section"
               >
-                <MessageCircle size={18} />
-                <span className="text-sm">{stats.commentsCount || 0} Comments</span>
+                <MessageCircle size={16} />
+                <span>{stats.commentsCount || 0} comments</span>
               </a>
-              <motion.button
-                onClick={handleShare}
-                className="flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Share2 size={18} />
-                <span>Share</span>
-              </motion.button>
             </div>
-          </motion.div>
+
+            {post.tags && post.tags.length > 0 && (
+              <div className="mt-6 flex flex-wrap gap-2">
+                {post.tags.slice(0, 8).map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-3 py-1 rounded-full text-xs font-semibold
+                      border border-gray-200 dark:border-gray-800
+                      text-gray-700 dark:text-gray-300
+                      bg-white dark:bg-gray-900"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-6 h-px bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-30" />
+          </div>
         </div>
-      </motion.header>
+      </header>
 
       {/* Content */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="max-w-4xl mx-auto">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+          {/* Main Content */}
+          <div className="flex-1 min-w-0 max-w-5xl mx-auto lg:mx-0">
           {/* Featured Image */}
           {post.image && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="mb-12 rounded-2xl overflow-hidden"
+              className="mb-10 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-800"
             >
               <Image
                 src={post.image}
-                alt={`${post.title} - Blog post by Sayed Safi, Full-Stack Web Developer`}
+                alt={post.imageAlt || `${post.title} - Blog post by Sayed Safi, Full-Stack Web Developer`}
                 width={1200}
                 height={630}
                 className="w-full h-auto object-cover"
@@ -222,48 +271,6 @@ export default function BlogDetail({ post }: BlogDetailProps) {
             </motion.div>
           )}
 
-          {/* Author Info */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex items-center gap-4 p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl mb-12"
-          >
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-              {post.author.name.charAt(0)}
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-900 dark:text-white text-lg">
-                {post.author.name}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                {post.author.bio}
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="flex flex-wrap gap-2 mb-12"
-            >
-              {post.tags.map((tag, index) => (
-                <motion.span
-                  key={tag}
-                  initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                  className="px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
-                >
-                  {tag}
-                </motion.span>
-              ))}
-            </motion.div>
-          )}
-
           {/* Article Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -271,7 +278,8 @@ export default function BlogDetail({ post }: BlogDetailProps) {
             transition={{ delay: 0.5 }}
             className="prose prose-lg dark:prose-invert max-w-none
               prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:font-bold
-              prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-4
+              prose-p:font-serif prose-li:font-serif prose-blockquote:font-serif
+              prose-p:text-gray-800 dark:prose-p:text-gray-200 prose-p:leading-relaxed prose-p:mb-5
               prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
               prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold
               prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
@@ -321,6 +329,70 @@ export default function BlogDetail({ post }: BlogDetailProps) {
               <span>Back to All Posts</span>
             </Link>
           </motion.div>
+          </div>
+
+          {/* Right Sidebar - Recent Posts */}
+          {recentPosts.length > 0 && (
+            <aside className="lg:w-80 flex-shrink-0">
+              <div className="sticky top-24">
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-xl border border-gray-200 dark:border-gray-700 backdrop-blur-sm"
+                >
+                  <div className="mb-4">
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white">Recent Posts</h2>
+                  </div>
+                  <div className="space-y-4">
+                    {recentPosts.map((recentPost, index) => (
+                      <Link
+                        key={recentPost._id}
+                        href={`/blog/${recentPost.slug}`}
+                        className="block group"
+                      >
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.4 + index * 0.1 }}
+                          className="flex gap-3 hover:opacity-80 transition-opacity"
+                        >
+                          {/* Image */}
+                          <div className="relative w-20 h-20 flex-shrink-0 bg-gradient-to-br from-blue-500 to-purple-500 overflow-hidden">
+                            {recentPost.image ? (
+                              <Image
+                                src={recentPost.image}
+                                alt={recentPost.title}
+                                fill
+                                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                                sizes="80px"
+                                quality={75}
+                                onError={(e) => {
+                                  const target = e.target as HTMLImageElement
+                                  target.style.display = 'none'
+                                }}
+                              />
+                            ) : (
+                              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/90 to-purple-600/90" />
+                            )}
+                          </div>
+                          {/* Title */}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-tight">
+                              {recentPost.title}
+                            </h3>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              {formatDate(recentPost.date)}
+                            </p>
+                          </div>
+                        </motion.div>
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
+            </aside>
+          )}
         </div>
       </div>
 

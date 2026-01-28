@@ -105,163 +105,149 @@ export default function Blog() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {blogPosts.map((post, index) => (
-                <motion.article
+                <Link
                   key={post._id}
-                  style={{ willChange: 'transform', transform: 'translate3d(0, 0, 0)' }}
-                  initial={{ opacity: 0, y: 50, scale: 0.95 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ 
-                    delay: index * 0.1, 
-                    duration: 0.6,
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                    type: 'tween'
-                  }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  whileHover={{ 
-                    y: -8,
-                    scale: 1.02,
-                    transition: { 
-                      duration: 0.3,
-                      ease: [0.25, 0.46, 0.45, 0.94]
-                    }
-                  }}
-                  className="group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all"
+                  href={`/blog/${post.slug}`}
+                  aria-label={`Open blog post: ${post.title}`}
+                  className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-4 focus-visible:ring-offset-gray-50 dark:focus-visible:ring-offset-gray-800/50 h-full"
                 >
-                  {/* Image */}
-                  <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden">
-                    {post.image ? (
-                      <Image
-                        src={post.image}
-                        alt={`${post.title} - Web Development Blog by Sayed Safi, MERN Stack Developer`}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        quality={75}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement
-                          target.style.display = 'none'
-                        }}
-                      />
-                    ) : (
+                  <motion.article
+                    style={{ willChange: 'transform', transform: 'translate3d(0, 0, 0)' }}
+                    initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    transition={{ 
+                      delay: index * 0.1, 
+                      duration: 0.6,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                      type: 'tween'
+                    }}
+                    viewport={{ once: true, margin: '-50px' }}
+                    whileHover={{ 
+                      y: -8,
+                      scale: 1.02,
+                      transition: { 
+                        duration: 0.3,
+                        ease: [0.25, 0.46, 0.45, 0.94]
+                      }
+                    }}
+                    className="group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all cursor-pointer h-full flex flex-col"
+                  >
+                    {/* Image */}
+                    <div className="relative h-48 bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden">
+                      {post.image ? (
+                        <Image
+                          src={post.image}
+                          alt={`${post.title} - Web Development Blog by Sayed Safi, MERN Stack Developer`}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          quality={75}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.style.display = 'none'
+                          }}
+                        />
+                      ) : (
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-br from-blue-600/80 to-purple-600/80 group-hover:from-blue-500/90 group-hover:to-purple-500/90 transition-all"
+                          whileHover={{ scale: 1.1 }}
+                        />
+                      )}
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-br from-blue-600/80 to-purple-600/80 group-hover:from-blue-500/90 group-hover:to-purple-500/90 transition-all"
-                        whileHover={{ scale: 1.1 }}
+                        className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"
                       />
-                    )}
-                    <motion.div
-                      className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <motion.span
-                        className="text-white text-xl font-bold"
-                        animate={{ opacity: [0.5, 1, 0.5] }}
-                        transition={{ duration: 3, repeat: Infinity }}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <motion.span
+                          className="text-white text-xl font-bold"
+                          animate={{ opacity: [0.5, 1, 0.5] }}
+                          transition={{ duration: 3, repeat: Infinity }}
+                        >
+                          {post.category}
+                        </motion.span>
+                      </div>
+                      
+                      {/* Category Badge */}
+                      <motion.div
+                        className="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full"
+                        initial={{ opacity: 0, scale: 0 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: index * 0.15 + 0.3 }}
                       >
-                        {post.category}
-                      </motion.span>
+                        <span className="text-white text-xs font-semibold">{post.category}</span>
+                      </motion.div>
                     </div>
-                    
-                    {/* Category Badge */}
-                    <motion.div
-                      className="absolute top-4 left-4 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full"
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: index * 0.15 + 0.3 }}
-                    >
-                      <span className="text-white text-xs font-semibold">{post.category}</span>
-                    </motion.div>
-                  </div>
 
-                  {/* Content */}
-                  <div className="p-6">
-                    <motion.div
-                      className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-3"
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      transition={{ delay: index * 0.15 + 0.4 }}
-                    >
-                      <div className="flex items-center gap-1">
-                        <Calendar size={14} />
-                        <span>{formatDate(post.date)}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Clock size={14} />
-                        <span>{post.readTime}</span>
-                      </div>
-                    </motion.div>
-
-                    <motion.h3
-                      className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.15 + 0.5 }}
-                    >
-                      {post.title}
-                    </motion.h3>
-
-                    <motion.p
-                      className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed line-clamp-3"
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      transition={{ delay: index * 0.15 + 0.6 }}
-                    >
-                      {post.excerpt}
-                    </motion.p>
-
-                    {post.tags && post.tags.length > 0 && (
+                    {/* Content */}
+                    <div className="p-6 flex-1 flex flex-col">
                       <motion.div
-                        className="flex flex-wrap gap-2 mb-4"
+                        className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-3"
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
-                        transition={{ delay: index * 0.15 + 0.7 }}
+                        transition={{ delay: index * 0.15 + 0.4 }}
                       >
-                        {post.tags.slice(0, 3).map((tag, tagIndex) => (
-                          <motion.span
-                            key={tag}
-                            className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium"
-                            initial={{ opacity: 0, scale: 0 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            whileHover={{ scale: 1.1, y: -2 }}
-                            transition={{ delay: index * 0.15 + 0.7 + tagIndex * 0.1, type: 'spring' }}
-                          >
-                            {tag}
-                          </motion.span>
-                        ))}
+                        <div className="flex items-center gap-1">
+                          <Calendar size={14} />
+                          <span>{formatDate(post.date)}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Clock size={14} />
+                          <span>{post.readTime}</span>
+                        </div>
                       </motion.div>
-                    )}
 
-                    <Link
-                      href={`/blog/${post.slug}`}
-                      className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors group/link"
-                      aria-label={`Read more about ${post.title}`}
-                    >
-                      <motion.span
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        whileHover={{ x: 5 }}
-                        transition={{ delay: index * 0.15 + 0.8 }}
+                      <motion.h3
+                        className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.15 + 0.5 }}
                       >
-                        Read more about {post.title}
-                      </motion.span>
-                      <motion.div
-                        whileHover={{ x: 5 }}
-                        transition={{ type: 'spring', stiffness: 400 }}
-                        aria-hidden="true"
-                      >
-                        <ArrowRight size={18} />
-                      </motion.div>
-                      <motion.span
-                        className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 group-hover/link:w-full transition-all"
-                      />
-                    </Link>
-                  </div>
+                        {post.title}
+                      </motion.h3>
 
-                  {/* Hover Glow Effect */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-pink-500/0 group-hover:from-blue-500/10 group-hover:via-purple-500/10 group-hover:to-pink-500/10 transition-all pointer-events-none rounded-2xl"
-                    initial={false}
-                  />
-                </motion.article>
+                      <motion.p
+                        className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed line-clamp-3 flex-1"
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        transition={{ delay: index * 0.15 + 0.6 }}
+                      >
+                        {post.excerpt}
+                      </motion.p>
+
+                      {post.tags && post.tags.length > 0 && (
+                        <motion.div
+                          className="flex flex-wrap gap-2 mb-4"
+                          initial={{ opacity: 0 }}
+                          whileInView={{ opacity: 1 }}
+                          transition={{ delay: index * 0.15 + 0.7 }}
+                        >
+                          {post.tags.slice(0, 3).map((tag, tagIndex) => (
+                            <motion.span
+                              key={tag}
+                              className="px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium"
+                              initial={{ opacity: 0, scale: 0 }}
+                              whileInView={{ opacity: 1, scale: 1 }}
+                              whileHover={{ scale: 1.1, y: -2 }}
+                              transition={{ delay: index * 0.15 + 0.7 + tagIndex * 0.1, type: 'spring' }}
+                            >
+                              {tag}
+                            </motion.span>
+                          ))}
+                        </motion.div>
+                      )}
+
+                      <div className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold group-hover:text-blue-700 dark:group-hover:text-blue-300 transition-colors mt-auto">
+                        <span>Read more</span>
+                        <ArrowRight size={18} aria-hidden="true" className="group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </div>
+
+                    {/* Hover Glow Effect */}
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-pink-500/0 group-hover:from-blue-500/10 group-hover:via-purple-500/10 group-hover:to-pink-500/10 transition-all pointer-events-none rounded-2xl"
+                      initial={false}
+                    />
+                  </motion.article>
+                </Link>
               ))}
             </div>
 

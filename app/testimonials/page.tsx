@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import Header from '@/components/Header'
 import StructuredData from '@/components/StructuredData'
 import ScrollProgress from '@/components/ScrollProgress'
@@ -48,6 +50,27 @@ export default function TestimonialsPage() {
         <SmoothScroll />
         <FloatingElements />
         <Header />
+        
+        {/* Page Header */}
+        <section className="py-12 pt-24 md:pt-28">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors mb-8"
+            >
+              <ArrowLeft size={18} />
+              <span>Back to Home</span>
+            </Link>
+
+            <h1 className="text-5xl md:text-6xl font-bold mb-4 text-gray-900 dark:text-white">
+              Testimonials
+            </h1>
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-12">
+              Don't just take my word for it - hear from clients who've worked with me
+            </p>
+          </div>
+        </section>
+
         <Testimonials />
         <Footer />
       </motion.main>

@@ -22,9 +22,11 @@ const navItems = [
 type HeaderProps = {
   /** Force solid header background (useful on hero/gradient pages) */
   forceSolid?: boolean
+  /** Smaller header height for content pages (e.g., single blog view) */
+  size?: 'default' | 'compact'
 }
 
-export default function Header({ forceSolid = false }: HeaderProps) {
+export default function Header({ forceSolid = false, size = 'default' }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { theme, setTheme } = useTheme()
@@ -63,6 +65,10 @@ export default function Header({ forceSolid = false }: HeaderProps) {
   }, [])
 
   const isSolid = forceSolid || isScrolled
+  const isCompact = size === 'compact'
+  const navHeightClass = isCompact ? 'h-12 sm:h-14 md:h-16' : 'h-14 sm:h-16 md:h-20'
+  const logoSizeClass = isCompact ? 'w-7 h-7 sm:w-9 sm:h-9 md:w-10 md:h-10' : 'w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12'
+  const titleSizeClass = isCompact ? 'text-sm sm:text-base md:text-lg lg:text-xl' : 'text-sm sm:text-lg md:text-xl lg:text-2xl'
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
     return pathname === href || pathname.startsWith(`${href}/`)
@@ -97,7 +103,7 @@ export default function Header({ forceSolid = false }: HeaderProps) {
         />
       )}
       <nav className="w-full max-w-full overflow-x-hidden" aria-label="Main navigation">
-        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20 w-full max-w-full px-2 sm:px-4 md:px-6 lg:px-8">
+        <div className={`flex items-center justify-between ${navHeightClass} w-full max-w-full px-2 sm:px-4 md:px-6 lg:px-8`}>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -112,7 +118,7 @@ export default function Header({ forceSolid = false }: HeaderProps) {
             >
               {/* Logo/Icon */}
               <motion.div
-                className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 flex-shrink-0"
+                className={`relative ${logoSizeClass} flex-shrink-0`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
@@ -129,7 +135,7 @@ export default function Header({ forceSolid = false }: HeaderProps) {
               {/* Site Title */}
               <div className="flex flex-col min-w-0 overflow-hidden">
                 <motion.span
-                  className="text-sm sm:text-lg md:text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent relative z-10 truncate"
+                  className={`${titleSizeClass} font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent relative z-10 truncate`}
                   animate={{
                     backgroundPosition: ['0%', '100%', '0%'],
                   }}
@@ -145,7 +151,7 @@ export default function Header({ forceSolid = false }: HeaderProps) {
                   Sayed Safi
                 </motion.span>
                 <motion.span
-                  className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium hidden sm:block truncate"
+                  className={isCompact ? 'hidden' : 'text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 font-medium hidden sm:block truncate'}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}

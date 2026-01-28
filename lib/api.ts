@@ -64,14 +64,24 @@ api.interceptors.response.use(
 
 // Blog API
 export const blogAPI = {
-  getAll: async (params?: { limit?: number; page?: number; published?: boolean }) => {
+  getAll: async (params?: { limit?: number; page?: number; published?: boolean; category?: string; search?: string }) => {
     try {
       const queryParams = new URLSearchParams()
       if (params?.limit) queryParams.append('limit', params.limit.toString())
       if (params?.page) queryParams.append('page', params.page.toString())
       if (params?.published !== undefined) queryParams.append('published', params.published.toString())
+      if (params?.category) queryParams.append('category', params.category)
+      if (params?.search) queryParams.append('search', params.search)
       
       const response = await api.get(`/blog?${queryParams.toString()}`)
+      return response.data
+    } catch (error: any) {
+      throw error
+    }
+  },
+  getCategories: async () => {
+    try {
+      const response = await api.get('/blog/categories')
       return response.data
     } catch (error: any) {
       throw error

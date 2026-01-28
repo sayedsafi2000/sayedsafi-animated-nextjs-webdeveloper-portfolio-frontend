@@ -38,9 +38,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       }
     }
 
-    const title = `${post.title} | Sayed Safi - Web Development Blog`
-    const description = post.excerpt || `Read ${post.title} by Sayed Safi, a Full-Stack Web Developer from Bangladesh. Learn about ${post.category} and web development.`
+    // Use SEO fields if available, otherwise fallback to defaults
+    const seoTitle = post.seoTitle || post.title
+    const metaDesc = post.metaDescription || post.excerpt || `Read ${post.title} by Sayed Safi, a Full-Stack Web Developer from Bangladesh. Learn about ${post.category} and web development.`
+    const title = post.seoTitle ? `${post.seoTitle} | Sayed Safi` : `${post.title} | Sayed Safi - Web Development Blog`
+    const description = metaDesc
     const keywords = [
+      ...(post.focusKeyword ? [post.focusKeyword] : []),
       ...(post.tags || []),
       'Sayed Safi',
       'sayedsafi',
@@ -55,20 +59,41 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       'Full-Stack Developer',
       'Web Developer Bangladesh',
     ]
+    
+    // Determine canonical URL
+    const canonicalUrl = post.canonicalUrl || `https://sayedsafi.me/blog/${params.slug}`
+    
+    // Robots meta
+    const robotsIndex = post.robots?.index !== undefined ? post.robots.index : true
+    const robotsFollow = post.robots?.follow !== undefined ? post.robots.follow : true
+    const robotsMeta = `${robotsIndex ? 'index' : 'noindex'}, ${robotsFollow ? 'follow' : 'nofollow'}`
+    
+    // Open Graph fields
+    const ogTitle = post.ogTitle || seoTitle
+    const ogDescription = post.ogDescription || metaDesc
+    const ogImage = post.ogImage || post.image || 'https://sayedsafi.me/opengraph-image'
+    
+    // Twitter Card
+    const twitterCard = post.twitterCard || 'summary_large_image'
+    
+    // Schema type
+    const schemaType = post.schemaType || 'BlogPosting'
 
     // Article Schema for SEO
     const articleSchema = {
       '@context': 'https://schema.org',
-      '@type': 'BlogPosting',
-      headline: post.title,
-      description: post.excerpt || description,
-      image: post.image || 'https://sayedsafi.me/opengraph-image',
-      datePublished: post.date,
-      dateModified: post.date,
+      '@type': schemaType,
+      headline: seoTitle,
+      description: metaDesc,
+      image: ogImage,
+      datePublished: post.publishedAt || post.date,
+      dateModified: post.updatedAt || post.date,
       author: {
         '@type': 'Person',
         name: post.author?.name || 'Sayed Safi',
         url: 'https://sayedsafi.me',
+        ...(post.author?.bio && { description: post.author.bio }),
+        ...(post.author?.image && { image: post.author.image }),
       },
       publisher: {
         '@type': 'Organization',
@@ -80,40 +105,70 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
       mainEntityOfPage: {
         '@type': 'WebPage',
-        '@id': `https://sayedsafi.me/blog/${params.slug}`,
+        '@id': canonicalUrl,
       },
-      keywords: keywords.join(', '),
+      ...(post.focusKeyword && { keywords: [post.focusKeyword, ...(post.tags || [])].join(', ') }),
+      ...(post.breadcrumbsEnabled !== false && {
+        breadcrumb: {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'Home',
+              item: 'https://sayedsafi.me'
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'Blog',
+              item: 'https://sayedsafi.me/blog'
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: seoTitle,
+              item: canonicalUrl
+            }
+          ]
+        }
+      }),
     }
 
     return {
       title,
       description,
       keywords,
+      robots: {
+        index: robotsIndex,
+        follow: robotsFollow,
+      },
       openGraph: {
-        title: post.title,
-        description: post.excerpt || description,
-        url: `https://sayedsafi.me/blog/${params.slug}`,
+        title: ogTitle,
+        description: ogDescription,
+        url: canonicalUrl,
         type: 'article',
-        publishedTime: post.date,
+        publishedTime: post.publishedAt || post.date,
+        modifiedTime: post.updatedAt || post.date,
         authors: [post.author?.name || 'Sayed Safi'],
         tags: post.tags || [],
         images: [
           {
-            url: post.image || 'https://sayedsafi.me/opengraph-image',
+            url: ogImage,
             width: 1200,
             height: 630,
-            alt: post.title,
+            alt: post.imageAlt || post.title,
           },
         ],
       },
       twitter: {
-        card: 'summary_large_image',
-        title: post.title,
-        description: post.excerpt || description,
-        images: [post.image || 'https://sayedsafi.me/opengraph-image'],
+        card: twitterCard,
+        title: ogTitle,
+        description: ogDescription,
+        images: [ogImage],
       },
       alternates: {
-        canonical: `https://sayedsafi.me/blog/${params.slug}`,
+        canonical: canonicalUrl,
       },
       other: {
         'schema': JSON.stringify(articleSchema),
@@ -134,7 +189,7 @@ export default function BlogPostLayout({
 }) {
   return (
     <>
-      <Header forceSolid />
+      <Header forceSolid size="compact" />
       <article itemScope itemType="https://schema.org/BlogPosting">
         {children}
       </article>

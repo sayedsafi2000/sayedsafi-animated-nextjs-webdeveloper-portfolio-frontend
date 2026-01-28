@@ -72,11 +72,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const data = await response.json()
       const posts = data?.data?.posts || []
       
-      blogRoutes = posts.map((post: any) => ({
+      // Filter to only include published posts (exclude drafts and scheduled)
+      const publishedPosts = posts.filter((post: any) => 
+        post.published === true && 
+        (post.status === 'published' || !post.status) // Include legacy posts without status field
+      )
+      
+      blogRoutes = publishedPosts.map((post: any) => ({
         url: `${baseUrl}/blog/${post.slug}`,
-        lastModified: new Date(post.date || post.createdAt),
+        lastModified: new Date(post.updatedAt || post.date || post.createdAt),
         changeFrequency: 'monthly' as const,
-        priority: 0.8,
+        priority: post.featured ? 0.9 : 0.8, // Higher priority for featured posts
       }))
     }
   } catch (error) {
