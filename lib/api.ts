@@ -117,6 +117,38 @@ export const blogAPI = {
   },
 }
 
+// Ads API
+export const adsAPI = {
+  getAll: async (params?: { active?: boolean; limit?: number }) => {
+    try {
+      const queryParams = new URLSearchParams()
+      if (params?.active !== undefined) queryParams.append('active', params.active.toString())
+      if (params?.limit) queryParams.append('limit', params.limit.toString())
+      
+      const response = await api.get(`/ads?${queryParams.toString()}`)
+      return response.data
+    } catch (error: any) {
+      throw error
+    }
+  },
+  trackClick: async (id: string) => {
+    try {
+      const response = await api.post(`/ads/${id}/click`)
+      return response.data
+    } catch (error: any) {
+      throw error
+    }
+  },
+  trackImpression: async (id: string) => {
+    try {
+      const response = await api.post(`/ads/${id}/impression`)
+      return response.data
+    } catch (error: any) {
+      throw error
+    }
+  },
+}
+
 // Projects API
 export const projectsAPI = {
   getAll: async (params?: { limit?: number; page?: number; featured?: boolean; isCustomCode?: boolean }) => {
