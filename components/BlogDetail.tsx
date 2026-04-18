@@ -386,7 +386,6 @@ export default function BlogDetail({ post }: BlogDetailProps) {
                 transition={{ delay: 0.5 }}
                 className="prose prose-lg dark:prose-invert max-w-none
                   prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:font-bold
-                  prose-p:font-serif prose-li:font-serif prose-blockquote:font-serif
                   prose-p:text-gray-800 dark:prose-p:text-gray-200 prose-p:leading-relaxed prose-p:mb-5
                   prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
                   prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold

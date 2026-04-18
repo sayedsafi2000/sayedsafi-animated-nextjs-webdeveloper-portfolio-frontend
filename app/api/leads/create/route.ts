@@ -27,10 +27,17 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const backendUrl = getBackendUrl();
     
-    // Get client IP from request (for geolocation)
-    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || 
-                     request.headers.get('x-real-ip') || 
-                     'unknown';
+    // Get client IP from request headers (try multiple sources for reliability)
+    // x-vercel-forwarded-for: Vercel-specific, contains real client IP
+    // x-forwarded-for: may contain multiple IPs (client, proxy1, proxy2), first is client
+    // x-real-ip: set by some proxies/load balancers
+    // cf-connecting-ip: Cloudflare
+    const clientIp = 
+      request.headers.get('x-vercel-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip')?.trim() ||
+      request.headers.get('cf-connecting-ip')?.trim() ||
+      'unknown';
     
     // Forward request to backend with client IP in headers
     const response = await fetch(`${backendUrl}/leads/create`, {
@@ -39,6 +46,7 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
         'User-Agent': request.headers.get('user-agent') || '',
         'X-Forwarded-For': clientIp,
+        'X-Real-IP': clientIp,
         'Referer': request.headers.get('referer') || '',
       },
       body: JSON.stringify(body),

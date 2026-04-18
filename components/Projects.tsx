@@ -138,28 +138,31 @@ export default function Projects() {
         ) : (
         <div ref={projectsRef} className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
-            <motion.div
-                key={project._id}
-              className="project-card group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg"
-              style={{ willChange: 'transform', transform: 'translate3d(0, 0, 0)' }}
-              initial={{ opacity: 0, y: 50, scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{
-                delay: index * 0.1,
-                duration: 0.6,
-                ease: [0.25, 0.46, 0.45, 0.94], // Custom cubic-bezier for smoothness
-                type: 'tween',
-              }}
-              whileHover={{
-                y: -8,
-                scale: 1.02,
-                transition: { 
-                  duration: 0.3,
-                  ease: [0.25, 0.46, 0.45, 0.94]
-                },
-              }}
-              viewport={{ once: true, margin: '-100px' }}
+            <Link 
+              href={`/projects/${project._id}`} 
+              key={project._id} 
+              className="project-card group block relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg"
             >
+              <motion.div
+                className="h-full"
+                initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{
+                  delay: index * 0.1,
+                  duration: 0.6,
+                  ease: [0.25, 0.46, 0.45, 0.94],
+                  type: 'tween',
+                }}
+                whileHover={{
+                  y: -8,
+                  scale: 1.02,
+                  transition: { 
+                    duration: 0.3,
+                    ease: [0.25, 0.46, 0.45, 0.94]
+                  },
+                }}
+                viewport={{ once: true, margin: '-100px' }}
+              >
               <div className="relative h-64 overflow-hidden bg-gray-100 dark:bg-gray-800">
                   {project.image ? (
                 <Image
@@ -209,12 +212,14 @@ export default function Projects() {
                   {project.title}
                 </motion.h3>
                 <motion.p
-                  className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed"
+                  className="text-sm text-gray-600 dark:text-gray-400 mb-4 leading-relaxed line-clamp-3"
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ delay: index * 0.15 + 0.4 }}
                 >
-                  {project.description}
+                  {project.description.length > 200 
+                    ? project.description.substring(0, 200) + '...' 
+                    : project.description}
                 </motion.p>
 
                   {project.tags && project.tags.length > 0 && (
@@ -250,6 +255,7 @@ export default function Projects() {
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:text-blue-700 dark:hover:text-blue-300 transition-colors group/link"
                     whileHover={{ x: 5, scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -269,7 +275,10 @@ export default function Projects() {
                   </motion.a>
                     )}
                   <motion.button
-                    onClick={(e) => handleGitHubClick(e, project.github)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleGitHubClick(e, project.github);
+                    }}
                     className="flex items-center gap-2 text-gray-600 dark:text-gray-400 font-semibold hover:text-gray-800 dark:hover:text-gray-200 transition-colors group/link cursor-pointer"
                     whileHover={{ x: 5, scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -289,7 +298,8 @@ export default function Projects() {
                   </motion.button>
                 </motion.div>
               </div>
-            </motion.div>
+              </motion.div>
+            </Link>
           ))}
         </div>
         )}

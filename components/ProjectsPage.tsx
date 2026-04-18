@@ -157,9 +157,10 @@ export default function ProjectsPage() {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                   {customCodeProjects.map((project) => (
-                    <div
+                    <Link
                       key={project._id}
-                      className="project-card group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all"
+                      href={`/projects/${project._id}`}
+                      className="project-card group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all block"
                     >
                       <div className="relative h-64 overflow-hidden bg-gray-100 dark:bg-gray-800">
                         {project.image ? (
@@ -196,7 +197,9 @@ export default function ProjectsPage() {
                           {project.title}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
-                          {project.description}
+                          {project.description.length > 200 
+                            ? project.description.substring(0, 200) + '...' 
+                            : project.description}
                         </p>
 
                         {project.tags && project.tags.length > 0 && (
@@ -212,20 +215,24 @@ export default function ProjectsPage() {
                           </div>
                         )}
 
-                        <div className="flex gap-4">
+                        <div className="flex gap-4" onClick={(e) => e.stopPropagation()}>
                           {project.link && (
                             <a
                               href={project.link}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <ExternalLink size={18} />
                               Visit
                             </a>
                           )}
                           <button
-                            onClick={(e) => handleGitHubClick(e, project.github)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleGitHubClick(e, project.github);
+                            }}
                             className="flex items-center gap-2 text-gray-600 dark:text-gray-400 font-semibold hover:underline cursor-pointer"
                           >
                             <Github size={18} />
@@ -233,7 +240,7 @@ export default function ProjectsPage() {
                           </button>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>
@@ -247,9 +254,10 @@ export default function ProjectsPage() {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {wordPressProjects.map((project) => (
-                    <div
+                    <Link
                       key={project._id}
-                      className="project-card group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all"
+                      href={`/projects/${project._id}`}
+                      className="project-card group relative bg-white dark:bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all block"
                     >
                       <div className="relative h-64 overflow-hidden bg-gray-100 dark:bg-gray-800">
                         {project.image ? (
@@ -281,7 +289,9 @@ export default function ProjectsPage() {
                           {project.title}
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
-                          {project.description}
+                          {project.description.length > 200 
+                            ? project.description.substring(0, 200) + '...' 
+                            : project.description}
                         </p>
 
                         {project.tags && project.tags.length > 0 && (
@@ -297,20 +307,24 @@ export default function ProjectsPage() {
                           </div>
                         )}
 
-                        <div className="flex gap-4">
+                        <div className="flex gap-4" onClick={(e) => e.stopPropagation()}>
                           {project.link && (
                             <a
                               href={project.link}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-2 text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+                              onClick={(e) => e.stopPropagation()}
                             >
                               <ExternalLink size={18} />
                               Visit
                             </a>
                           )}
                           <button
-                            onClick={(e) => handleGitHubClick(e, project.github)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleGitHubClick(e, project.github);
+                            }}
                             className="flex items-center gap-2 text-gray-600 dark:text-gray-400 font-semibold hover:underline cursor-pointer"
                           >
                             <Github size={18} />
@@ -318,7 +332,7 @@ export default function ProjectsPage() {
                           </button>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>

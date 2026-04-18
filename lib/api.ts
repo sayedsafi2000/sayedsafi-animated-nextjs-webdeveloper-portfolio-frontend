@@ -165,6 +165,14 @@ export const projectsAPI = {
       throw error
     }
   },
+  getById: async (id: string) => {
+    try {
+      const response = await api.get(`/projects/${id}`)
+      return response.data
+    } catch (error: any) {
+      throw error
+    }
+  },
 }
 
 // Services API
