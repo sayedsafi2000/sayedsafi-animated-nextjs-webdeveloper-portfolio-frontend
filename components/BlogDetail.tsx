@@ -384,20 +384,7 @@ export default function BlogDetail({ post }: BlogDetailProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="prose prose-lg dark:prose-invert max-w-none
-                  prose-headings:text-gray-900 dark:prose-headings:text-white prose-headings:font-bold
-                  prose-p:text-gray-800 dark:prose-p:text-gray-200 prose-p:leading-relaxed prose-p:mb-5
-                  prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
-                  prose-strong:text-gray-900 dark:prose-strong:text-white prose-strong:font-bold
-                  prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm
-                  prose-pre:bg-gray-900 dark:prose-pre:bg-gray-800 prose-pre:text-gray-100 prose-pre:rounded-lg prose-pre:p-4 prose-pre:overflow-x-auto
-                  prose-blockquote:border-l-blue-500 prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:italic
-                  prose-blockquote:text-gray-700 dark:prose-blockquote:text-gray-300
-                  prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4
-                  prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4
-                  prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-2
-                  prose-hr:border-gray-300 dark:prose-hr:border-gray-700
-                  prose-img:rounded-lg prose-img:my-8"
+                className="article-content"
               >
                 {sanitizedContent ? (
                   <div 

@@ -187,7 +187,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
-        
+        <script src="https://analytics.ahrefs.com/analytics.js" data-key="K7uMqN9r0BicLjObVByuXA" async></script>
         {/* RSS Feed Link */}
         <link rel="alternate" type="application/rss+xml" title="Sayed Safi Blog RSS Feed" href="https://sayedsafi.me/feed.xml" />
         
@@ -195,6 +195,7 @@ export default function RootLayout({
         <link rel="icon" href="/logo.png" type="image/png" />
         <link rel="apple-touch-icon" href="/logo.png" />
         <link rel="shortcut icon" href="/logo.png" />
+
       </head>
       <body className={josefinSans.variable}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>

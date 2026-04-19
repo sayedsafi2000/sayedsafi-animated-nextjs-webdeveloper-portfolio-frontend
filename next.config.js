@@ -20,7 +20,7 @@ const nextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 31536000, // 1 year
-    unoptimized: false,
+    unoptimized: process.env.NODE_ENV === 'development', // Disable optimization in dev for faster loading
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     // Note: quality is set per Image component (default is 75 in Next.js)
@@ -34,6 +34,12 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'sayedsafi.me',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',
       },
