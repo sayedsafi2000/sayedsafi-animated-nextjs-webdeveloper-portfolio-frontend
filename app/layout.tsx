@@ -1,13 +1,20 @@
 import type { Metadata } from 'next'
-import { Josefin_Sans } from 'next/font/google'
+import { Roboto, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { ThemeProvider } from '@/components/ThemeProvider'
 import PageTracker from '@/components/PageTracker'
 
-const josefinSans = Josefin_Sans({ 
+const roboto = Roboto({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-josefin-sans',
+  weight: ['300', '400', '500', '700'],
+  display: 'swap',
+  variable: '--font-roboto',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains-mono',
 })
 
 export const metadata: Metadata = {
@@ -125,7 +132,7 @@ export default function RootLayout({
   const { personSchema, websiteSchema, professionalServiceSchema, organizationSchema, faqSchema } = require('@/lib/schema')
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${roboto.variable} ${jetbrainsMono.variable}`}>
       <head>
         {/* Essential Meta Tags */}
         <meta charSet="utf-8" />
@@ -197,7 +204,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/logo.png" />
 
       </head>
-      <body className={josefinSans.variable}>
+      <body className="font-sans antialiased">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <PageTracker />
           {children}

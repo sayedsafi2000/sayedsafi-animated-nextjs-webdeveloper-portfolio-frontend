@@ -9,6 +9,28 @@ const config: Config = {
   darkMode: 'class',
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          'var(--font-roboto)',
+          'Roboto',
+          'ui-sans-serif',
+          'system-ui',
+          '-apple-system',
+          'Segoe UI',
+          'Helvetica Neue',
+          'Arial',
+          'sans-serif',
+        ],
+        mono: [
+          'var(--font-jetbrains-mono)',
+          'ui-monospace',
+          'SFMono-Regular',
+          'Menlo',
+          'Monaco',
+          'Consolas',
+          'monospace',
+        ],
+      },
       colors: {
         primary: {
           50: '#f0f9ff',
